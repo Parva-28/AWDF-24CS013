@@ -1,0 +1,7 @@
+MongoDB connected
+Server running on port 5000
+MongoDB connected
+Server running on port 5000
+GET /debug/cache-stats - 2026-10-21T11:00:44.961Z
+MongoDB connected
+Server running on port 5000

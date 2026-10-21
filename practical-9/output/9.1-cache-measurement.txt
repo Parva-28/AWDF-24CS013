@@ -1,0 +1,36 @@
+Inserted 5000 tasks for cache@example.com
+== A. Without caching (CACHE_ENABLED=false), 5000 tasks ==
+  GET /tasks run 1: 90.5 ms  X-Cache: MISS
+  GET /tasks run 2: 74.0 ms  X-Cache: MISS
+  GET /tasks run 3: 65.3 ms  X-Cache: MISS
+  GET /tasks run 4: 66.5 ms  X-Cache: MISS
+  GET /tasks run 5: 84.1 ms  X-Cache: MISS
+
+== B. With node-cache (TTL 60 s) ==
+  GET /tasks run 1: 88.4 ms  X-Cache: MISS
+  GET /tasks run 2: 36.1 ms  X-Cache: HIT
+  GET /tasks run 3: 5.5 ms  X-Cache: HIT
+  GET /tasks run 4: 26.1 ms  X-Cache: HIT
+  GET /tasks run 5: 5.5 ms  X-Cache: HIT
+
+== C. Invalidation on write ==
+  GET /tasks -> X-Cache HIT; first title: Seeded task 1
+  PUT /tasks/6ad89b4fc1406f64707eced2 -> 200 (title changed to "Updated after caching")
+  GET /tasks -> X-Cache MISS; first title: Updated after caching
+  GET /tasks -> X-Cache HIT
+  POST /tasks -> 201
+  GET /tasks -> X-Cache MISS; task count: 5001
+  DELETE /tasks/6ad89b4fc1406f64707eced2 -> 200
+  GET /tasks -> X-Cache MISS; task count: 5000
+
+== D. Single-task endpoint has its own cache key (supplementary) ==
+  GET /tasks/6ad89b4fc1406f64707eced3 -> X-Cache MISS
+  GET /tasks/6ad89b4fc1406f64707eced3 -> X-Cache HIT
+
+== E. Debug endpoint: GET /debug/cache-stats (supplementary) ==
+{"enabled":true,"ttlSeconds":60,"hits":9,"misses":5,"keys":2,"ksize":84,"vsize":1180760,"cachedKeys":[...]}
+
+== F. TTL experiment (CACHE_TTL_SECONDS=5) ==
+  t=0s  GET /tasks -> X-Cache MISS
+  t=0s  GET /tasks -> X-Cache HIT
+  t=6s  GET /tasks -> X-Cache MISS  (entry expired after 5 s)
