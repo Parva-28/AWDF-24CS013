@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 4: Building a RESTful API with Node.js and Express</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 4 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Building a RESTful API with Node.js and Express</h1>
+<div class="chips"><span class="chip">CO/PO: CO2 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To design and implement a RESTful backend server with complete CRUD endpoints using Express middleware pipeline.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to design and implement a complete RESTful API using Express, including a working middleware pipeline with logging and centralized error handling.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Basic JavaScript (functions, objects, arrays, async basics)</li><li>Understanding of HTTP methods (GET, POST, PUT, DELETE) and status codes</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>Express.js</li><li>Postman or Thunder Client</li><li>Visual Studio Code</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 4 IBM: Node.js &amp; MongoDB Developing Back-end Database Applications, Module 1 (RESTful API design with Node.js and Express, middleware pipeline, request lifecycle).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Build a Node/Express backend for a Task Management system.</li><li>Implement REST endpoints for creating, reading, updating, and deleting tasks (in-memory array, no database yet).</li><li>Apply a request logging middleware that logs method, URL, and timestamp for every incoming request.</li><li>Apply a global error handling middleware as the last middleware in the pipeline.</li><li>Use correct HTTP status codes (200, 201, 404, 500) for each response.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>Why must the error handling middleware be defined last in the middleware chain?</li><li>What is the difference between app.use() and a route-specific middleware?</li><li>Why is it considered bad practice to send raw error stack traces to the client?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a middleware that rejects requests without a Content-Type: application/json header on POST/PUT.</li><li>Add a route-specific middleware that validates the task ID format before reaching the controller.</li><li>Add a 404 handler for undefined routes that returns a structured JSON response.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Setting up an Express server and defining RESTful routes</li><li>Writing and applying custom middleware functions</li><li>Structuring a request-response-error pipeline correctly</li><li>Returning appropriate HTTP status codes for each operation</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>Client (Postman/Browser)
+        |
+        v
+ [Logging Middleware]
+        |
+        v
+ Express Router
+ ├── GET    /tasks       → getAllTasks
+ ├── POST   /tasks       → createTask
+ ├── PUT    /tasks/:id   → updateTask
+ └── DELETE /tasks/:id   → deleteTask
+        |
+        v
+ [Global Error Handler]</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Initialize a new Node project and install Express:</p><pre><code>mkdir task-manager-api &amp;&amp; cd task-manager-api
+npm init -y
+npm install express</code></pre></li><li><p>Create server.js and set up a basic Express app:</p><pre><code>const express = require(&#x27;express&#x27;);
+const app = express();
+app.use(express.json());
+app.listen(5000, () =&gt; console.log(&#x27;Server running on port 5000&#x27;));</code></pre></li><li><p>Add a request logging middleware applied globally:</p><pre><code>app.use((req, res, next) =&gt; {
+  console.log(`${req.method} ${req.url} - ${new Date().toISOString()}`);
+  next();
+});</code></pre></li><li><p>Implement the 4 CRUD routes using an in-memory array as temporary storage.</p></li><li><p>Add a global error handling middleware as the final middleware:</p><pre><code>app.use((err, req, res, next) =&gt; {
+  console.error(err.stack);
+  res.status(500).json({ error: &#x27;Something went wrong&#x27; });
+});</code></pre></li><li><p>Test all 4 endpoints using Postman or Thunder Client, verifying correct status codes.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Demonstrate the request lifecycle on the whiteboard/diagram before coding: students often treat middleware as &#x27;magic&#x27;.</li><li>Emphasize calling next() in every middleware that doesn&#x27;t end the response, or requests will hang indefinitely.</li><li>Show a live example of the error handler catching a deliberately thrown error.</li><li>Walk through Postman setup once as a class before students work independently.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Forgetting to call next() inside custom middleware, causing the request to hang.</li><li>Placing the error handling middleware before the routes instead of after all of them.</li><li>Not setting app.use(express.json()), causing req.body to be undefined on POST/PUT.</li><li>Returning inconsistent response formats across different endpoints.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Request hangs indefinitely</td><td>Middleware does not call next() or send a response</td><td>Ensure every middleware either calls next() or ends the response with res.send/json</td></tr><tr><td>req.body is undefined</td><td>Missing express.json() middleware</td><td>Add app.use(express.json()) before route definitions</td></tr><tr><td>Error handler never triggers</td><td>Error handler defined before routes, or errors not passed via next(err)</td><td>Move error handler to be the last app.use(); call next(err) inside try/catch blocks</td></tr><tr><td>Postman shows &#x27;Cannot GET /tasks&#x27;</td><td>Route path mismatch or server not restarted after changes</td><td>Verify route path spelling and restart the Node server</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a middleware that rejects POST/PUT requests missing a Content-Type header.</li><li>Add a custom 404 handler for undefined routes.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>New repository named task-manager-api-&lt;rollno&gt;</li><li>Working Express server with all 4 CRUD routes and middleware pipeline</li><li>Clean .gitignore (node_modules excluded)</li><li>At least one meaningful commit message describing the work</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-3/index.html"><span>← Previous</span>Practical 3: API Integration and Data Rendering in React</a><a class="next" href="../practical-5/index.html"><span>Next →</span>Practical 5: MongoDB Integration and Schema Design with Mongoose</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

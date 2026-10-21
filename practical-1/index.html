@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 1: Introduction to React and Component Architecture</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 1 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Introduction to React and Component Architecture</h1>
+<div class="chips"><span class="chip">CO/PO: CO1 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To set up a React development environment using Vite and build a static UI using independently structured, reusable components.</p><p><strong>Industry relevance.</strong> Mirrors the standard local dev setup used in modern frontend teams. Vite-based scaffolding and component reuse are foundational skills expected from day one in any React role.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to set up a React development environment, create reusable components, and compose them into a working UI using props for data flow.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Basic HTML and CSS</li><li>Familiarity with JavaScript fundamentals (variables, functions)</li><li>Node.js and npm installed on the lab machine</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>Visual Studio Code</li><li>Vite, React 18+</li><li>Browser DevTools (Console + React DevTools extension)</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Concepts to review</strong></p><ul><li>What React is and why component-based UI development is used over plain HTML/JS</li><li>JSX syntax embedding JavaScript expressions inside markup</li><li>Functional components and the role of the return statement</li><li>Props passing data from a parent component into a child component</li><li>Why reusable components reduce duplication and improve maintainability</li></ul></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Create a React application using Vite for a student portfolio page.</li><li>The application must include at least 4 reusable components: Header, About, Skills, and Footer.</li><li>Each component must be independently structured and composed into a single-page layout.</li><li>No logic or JSX should be duplicated across components.</li><li>Props must be used to pass at least one piece of data into a minimum of 2 components.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>What is the role of each component in the overall UI structure?</li><li>How does React re-render when props change?</li><li>Why is component reusability important in large-scale applications?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a NavBar component that highlights the active section.</li><li>Pass an array of skills as a prop to the Skills component and render them dynamically.</li><li>Add a theme color prop to the Header and apply it as an inline style.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Setting up a React project using Vite</li><li>Designing and structuring reusable functional components</li><li>Passing data between components using props</li><li>Composing a single-page layout from multiple components</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>App.jsx
+ ├── Header.jsx   (site title, name)
+ ├── About.jsx    (short bio text)
+ ├── Skills.jsx   (list of skills, receives props)
+ └── Footer.jsx   (contact / copyright info)</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Verify Node.js and npm are installed:</p><pre><code>node -v
+npm -v</code></pre></li><li><p>Scaffold the React app using Vite:</p><pre><code>npm create vite@latest student-portfolio -- --template react
+cd student-portfolio
+npm install
+npm run dev</code></pre></li><li><p>Inside src/components, create four files: Header.jsx, About.jsx, Skills.jsx, Footer.jsx.</p></li><li><p>Build the Skills component to accept a props array and render it as a list:</p><pre><code>function Skills({ skillList }) {
+  return (
+    &lt;ul&gt;
+      {skillList.map((s) =&gt; &lt;li key={s}&gt;{s}&lt;/li&gt;)}
+    &lt;/ul&gt;
+  );
+}</code></pre></li><li><p>Import and compose all four components inside App.jsx in a single layout.</p></li><li><p>Pass a name prop to Header and a skillList prop to Skills from App.jsx.</p></li><li><p>Run the app and verify all components render correctly without console errors.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Pre-check that lab machines have Node.js installed; keep an offline installer ready as backup.</li><li>Live-demo the Vite scaffold once, slowly, before letting students repeat it independently.</li><li>Walk the room during npm install: slow lab Wi-Fi or proxy settings are the most common blocker.</li><li>Stress &#x27;one component, one responsibility&#x27; while reviewing student component structure.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Using an outdated Node version, causing the Vite scaffold command to fail.</li><li>Putting all UI code inside App.jsx instead of splitting into separate components.</li><li>Hardcoding values instead of passing them as props.</li><li>Forgetting to save a file before checking the browser, leading to confusion about why changes aren&#x27;t visible.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>npm create vite hangs</td><td>Network/proxy blocked</td><td>Check lab internet connection; retry on stable network or use offline cache</td></tr><tr><td>Port 5173 already in use</td><td>Old dev server still running</td><td>Stop the previous process or run npm run dev -- --port 5174</td></tr><tr><td>Component not visible in browser</td><td>Component not imported/composed in App.jsx</td><td>Confirm import statement and that the component is placed inside the return block</td></tr><tr><td>Props show as undefined</td><td>Prop name mismatch between parent and child</td><td>Verify the prop name passed in App.jsx matches the name used in the child component</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a Projects component to the portfolio that renders a hardcoded list of 3 projects.</li><li>Experiment with passing different prop values and observe how the rendered UI changes.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Public repository named portfolio-&lt;rollno&gt;</li><li>Working Vite + React project with 4+ components</li><li>Clean .gitignore (node_modules excluded)</li><li>At least one meaningful commit message describing the work</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../index.html"><span>← Back</span>All practicals</a><a class="next" href="../practical-2/index.html"><span>Next →</span>Practical 2: State Management and Routing in React</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

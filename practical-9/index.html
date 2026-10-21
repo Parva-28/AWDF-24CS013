@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 9: In-Memory Caching and Query Optimization</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 9 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>In-Memory Caching and Query Optimization</h1>
+<div class="chips"><span class="chip">CO/PO: CO2, CO4 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To implement server-side caching and measure its impact on API response time.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to implement in-memory caching for a REST API, ensure cache correctness through invalidation, and measure the performance impact using real response time data.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practicals 4–7 completed working Node/Express/MongoDB backend with authentication</li><li>Basic understanding of why repeated database reads are expensive at scale</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>node-cache</li><li>Express.js, Mongoose</li><li>Postman or Thunder Client (for response time measurement)</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 9 IBM: Node.js &amp; MongoDB Developing Back-end Database Applications, Module 5 (optimization techniques, back-end performance, scaling approaches, load balancing overview).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Add in-memory caching to the Task Management backend using node-cache.</li><li>Cache the response of GET /tasks (all tasks) with a reasonable TTL (e.g., 60 seconds).</li><li>Invalidate the cache on any write operation (POST, PUT, or DELETE) so stale data is never served.</li><li>Record and compare API response times with and without caching using Postman or Thunder Client.</li><li>Document the measured difference with at least 3 sample readings for each case (cached vs uncached).</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>Why must the cache be invalidated on every write operation, and what would happen to data correctness if it were not?</li><li>What is a reasonable TTL (time-to-live) for cached data in a task management context, and what trade-off does TTL length represent?</li><li>Why is in-memory caching (node-cache) not suitable for a multi-server/multi-instance deployment, even though it works fine in this lab?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Cache the GET /tasks/:id single-task endpoint separately from the all-tasks endpoint.</li><li>Add a cache-hit/cache-miss counter and expose it via a debug endpoint.</li><li>Experiment with different TTL values and document how it affects perceived staleness versus performance.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Implementing in-memory caching using node-cache</li><li>Designing correct cache invalidation logic for write operations</li><li>Measuring and comparing API response times empirically</li><li>Reasoning about the trade-offs of caching strategies</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>GET /tasks request
+      |
+      v
+ Cache check (node-cache)
+   ├── HIT  → return cached data immediately
+   └── MISS → query MongoDB → store in cache → return data
+
+POST/PUT/DELETE /tasks
+      |
+      v
+ Write to MongoDB → invalidate cache key</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Install node-cache:</p><pre><code>npm install node-cache</code></pre></li><li><p>Initialize a cache instance in a shared module:</p><pre><code>const NodeCache = require(&#x27;node-cache&#x27;);
+const cache = new NodeCache({ stdTTL: 60 });
+module.exports = cache;</code></pre></li><li><p>Update the GET /tasks route to check the cache first:</p><pre><code>const cached = cache.get(&#x27;all_tasks&#x27;);
+if (cached) return res.json(cached);
+
+const tasks = await Task.find();
+cache.set(&#x27;all_tasks&#x27;, tasks);
+res.json(tasks);</code></pre></li><li><p>Invalidate the cache inside POST, PUT, and DELETE handlers after a successful write:</p><pre><code>cache.del(&#x27;all_tasks&#x27;);</code></pre></li><li><p>In Postman, send GET /tasks 3 times and record response time for each (look at the &quot;Time&quot; field).</p></li><li><p>Temporarily disable caching (comment out the cache check) and repeat the same 3 requests for comparison.</p></li><li><p>Record both sets of readings in a simple table for the lab journal.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Tell students explicitly to record uncached response times BEFORE adding the cache check, or the comparison cannot be done fairly afterward.</li><li>Clarify that node-cache is process-local memory. Explain briefly why this would not work correctly if the app ran across multiple server instances (sets up the later Unit 4 scaling discussion).</li><li>Walk through a live example of forgetting cache invalidation, showing students a stale response after an update, to make the risk concrete.</li><li>Encourage at least 3 repeated readings per condition rather than a single measurement, since response time can vary.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Forgetting to invalidate the cache after a write, leading to stale data being served indefinitely within the TTL window.</li><li>Caching per-request without a stable cache key, causing every request to be treated as a cache miss.</li><li>Only taking a single response time reading instead of multiple samples, making the comparison unreliable.</li><li>Setting a TTL so short that the cache effectively never gets hit during testing.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Updated task not reflected in GET response</td><td>Cache not invalidated after PUT/DELETE</td><td>Add cache.del(&#x27;all_tasks&#x27;) inside every write route handler</td></tr><tr><td>No measurable difference between cached and uncached</td><td>TTL too short or cache key changing on every request</td><td>Use a fixed, consistent cache key string and a TTL of at least 60 seconds for testing</td></tr><tr><td>Cache works but server restarts wipe it</td><td>node-cache is in-memory and resets on restart</td><td>This is expected behavior for in-memory caching. Note it in the lab journal as a known limitation</td></tr><tr><td>Response time barely changes</td><td>MongoDB query was already fast (small dataset)</td><td>Add more sample task documents to the database to make the cache benefit more visible</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Cache the single-task GET /tasks/:id endpoint separately from the all-tasks endpoint.</li><li>Add a simple cache-hit/cache-miss counter exposed via a debug endpoint.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as Practical 4/5, updated with new commits</li><li>node-cache implementation with correct invalidation on all write operations</li><li>Response time comparison data (cached vs uncached) included in README or docs folder</li><li>At least one commit specifically for caching implementation</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-8/index.html"><span>← Previous</span>Practical 8: Performance Optimization and Lazy Loading in React</a><a class="next" href="../practical-10/index.html"><span>Next →</span>Practical 10: Asynchronous Processing with Event-Driven Architecture</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

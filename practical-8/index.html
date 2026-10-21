@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 8: Performance Optimization and Lazy Loading in React</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 8 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Performance Optimization and Lazy Loading in React</h1>
+<div class="chips"><span class="chip">CO/PO: CO1 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To improve frontend performance using lazy loading and code splitting techniques.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to apply code splitting and lazy loading in React to reduce initial bundle size, and will be able to measure and explain the resulting performance impact.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practicals 1–6 completed multi-route React app with full-stack integration</li><li>Basic understanding of how the browser loads and parses JavaScript bundles</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>React 18+ (lazy, Suspense)</li><li>Browser DevTools (Network + Performance tabs)</li><li>Vite build output</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 8 IBM: Developing Front-End Apps with React, Module 4 (advanced React features, hooks for optimization). Supplement with browser DevTools Performance/Network tab profiling.</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Optimize the React frontend of the Task Management application by implementing lazy loading for route-based components.</li><li>Apply React.lazy() and Suspense to at least the Projects and Contact routes (or equivalent route-based components).</li><li>Provide a meaningful fallback UI while a lazy-loaded chunk is loading.</li><li>Measure and compare bundle size and load time before and after optimization using browser developer tools.</li><li>Document the before/after comparison with screenshots or recorded values.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>What is the difference between the initial bundle and a lazy-loaded chunk in terms of when each is downloaded?</li><li>Why does lazy loading improve perceived performance even though the total amount of code downloaded eventually stays the same?</li><li>In what situations would lazy loading not be worth the added complexity (e.g., a very small app)?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Lazy load a heavy third-party component (e.g., a chart library) only when a specific page needs it.</li><li>Add a minimum-delay fallback (e.g., 300ms) to avoid a flickering loading state on fast connections.</li><li>Use the React DevTools Profiler to identify and document one unnecessary re-render in the app.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Implementing route-based code splitting using React.lazy() and Suspense</li><li>Reading and interpreting the browser Network tab for chunk loading behavior</li><li>Measuring bundle size using build tooling output</li><li>Communicating a before/after performance comparison clearly</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>Before (single bundle):
+  main.bundle.js ─────────► [Home][Projects][Contact] all loaded upfront
+
+After (code-split):
+  main.bundle.js       ──► loads on first visit
+  Home.chunk.js        ──► loaded only when / is visited
+  Projects.chunk.js    ──► loaded only when /projects is visited
+  Contact.chunk.js     ──► loaded only when /contact is visited</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Record baseline metrics before optimization: build the app and check bundle size:</p><pre><code>npm run build
+# note the output bundle size shown in the terminal</code></pre></li><li><p>Open the Network tab in DevTools, reload the app, and note the total JS transferred and load time.</p></li><li><p>Convert route imports to lazy imports:</p><pre><code>import { lazy, Suspense } from &#x27;react&#x27;;
+
+const Projects = lazy(() =&gt; import(&#x27;./pages/Projects&#x27;));
+const Contact = lazy(() =&gt; import(&#x27;./pages/Contact&#x27;));</code></pre></li><li><p>Wrap the Routes block with Suspense and a fallback:</p><pre><code>&lt;Suspense fallback={&lt;div&gt;Loading page...&lt;/div&gt;}&gt;
+  &lt;Routes&gt;
+    &lt;Route path=&quot;/projects&quot; element={&lt;Projects /&gt;} /&gt;
+    &lt;Route path=&quot;/contact&quot; element={&lt;Contact /&gt;} /&gt;
+  &lt;/Routes&gt;
+&lt;/Suspense&gt;</code></pre></li><li><p>Rebuild the app and confirm separate chunk files are generated for each lazy route.</p></li><li><p>Reload with Network tab open, throttle to &quot;Slow 3G&quot;, and observe the fallback UI rendering before the chunk loads.</p></li><li><p>Record post-optimization metrics and prepare the before/after comparison.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Tell students in advance to capture baseline screenshots before making any changes. This is required evidence for the rubric and cannot be reconstructed afterward.</li><li>Demonstrate Network throttling (Slow 3G) live so the fallback UI is actually visible on fast lab Wi-Fi. The loading state may flash too quickly to notice otherwise.</li><li>Clarify that lazy loading delays when code downloads, not how much code downloads in total over a full session.</li><li>Walk through reading the Vite build output chunk list together once before students interpret their own.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Not capturing baseline (before) metrics, making the comparison impossible to demonstrate.</li><li>Wrapping individual components in Suspense unnecessarily instead of wrapping at the route level.</li><li>Forgetting that React.lazy() only works with default exports, causing import errors.</li><li>Testing only on fast lab Wi-Fi without throttling, so the fallback UI is never actually observed.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Element type is invalid error after adding lazy()</td><td>Lazy-loaded component is not a default export</td><td>Ensure the component file uses export default ComponentName</td></tr><tr><td>Fallback UI never appears</td><td>Chunk loads too fast on local network to observe</td><td>Enable Network throttling (Slow 3G) in DevTools to simulate a slower connection</td></tr><tr><td>No separate chunk files after build</td><td>Static import still used instead of dynamic import()</td><td>Confirm the route component uses lazy(() =&gt; import(&#x27;./Component&#x27;)) syntax, not a top-level import</td></tr><tr><td>Suspense fallback shows for the entire app, not just one route</td><td>Suspense wraps too broad a section of the component tree</td><td>Move Suspense to wrap only the Routes block, not the entire App component</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Lazy load one additional heavy component (e.g., a chart or large list) beyond the required routes.</li><li>Use React DevTools Profiler to identify and note one unnecessary re-render in the app.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as Practical 6/7, updated with new commits</li><li>Lazy loading applied to at least 2 route-based components with Suspense fallback</li><li>Before/after screenshots or recorded metrics included in the README or a docs folder</li><li>At least one commit specifically for performance optimization</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-7/index.html"><span>← Previous</span>Practical 7: Authentication and Middleware Pipeline</a><a class="next" href="../practical-9/index.html"><span>Next →</span>Practical 9: In-Memory Caching and Query Optimization</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

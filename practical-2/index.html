@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 2: State Management and Routing in React</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 2 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>State Management and Routing in React</h1>
+<div class="chips"><span class="chip">CO/PO: CO1 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To implement reactive state management using useState and multi-page navigation using React Router in the existing portfolio application.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to implement client-side routing with React Router and manage dynamic UI state using useState, resulting in a multi-page application without full page reloads.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practical 1 completed working portfolio app with reusable components</li><li>Basic understanding of JavaScript array/object handling</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>Visual Studio Code</li><li>React 18+, React Router v6</li><li>Browser DevTools</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 2 IBM: Developing Front-End Apps with React, Module 2 (props, event handling, component composition, useState hook).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Extend the portfolio application from Practical 1 by adding React Router.</li><li>Implement a navigation bar with at least 3 routes: Home, Projects, and Contact.</li><li>Each route must render a distinct component without a full page reload.</li><li>Add at least 2 useState variables used meaningfully: one for toggling UI visibility and one for managing a form input on the Contact page.</li><li>The Contact page must include a controlled input that captures and displays user input in real time.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>What is the role of each component in the overall UI structure?</li><li>How does React re-render when props change?</li><li>Why is component reusability important in large-scale applications?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a 404 Not Found route that renders a custom error component for unknown paths.</li><li>Implement a dark/light mode toggle using useState that applies a CSS class to the root element.</li><li>Store the contact form input in state and display a live character count below the input.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Installing and configuring React Router v6</li><li>Defining and navigating between routes without page reload</li><li>Managing component state using the useState hook</li><li>Building controlled form inputs tied to state</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>App.jsx (wrapped in &lt;BrowserRouter&gt;)
+ ├── NavBar.jsx          (links to all routes)
+ ├── Route: &quot;/&quot;          → Home.jsx
+ ├── Route: &quot;/projects&quot;  → Projects.jsx
+ └── Route: &quot;/contact&quot;   → Contact.jsx (controlled form, useState)</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Install React Router in the existing portfolio project:</p><pre><code>npm install react-router-dom</code></pre></li><li><p>Wrap the App component with BrowserRouter in main.jsx:</p><pre><code>import { BrowserRouter } from &#x27;react-router-dom&#x27;;
+
+&lt;BrowserRouter&gt;
+  &lt;App /&gt;
+&lt;/BrowserRouter&gt;</code></pre></li><li><p>Define 3 routes inside App.jsx using Routes and Route:</p><pre><code>&lt;Routes&gt;
+  &lt;Route path=&quot;/&quot; element={&lt;Home /&gt;} /&gt;
+  &lt;Route path=&quot;/projects&quot; element={&lt;Projects /&gt;} /&gt;
+  &lt;Route path=&quot;/contact&quot; element={&lt;Contact /&gt;} /&gt;
+&lt;/Routes&gt;</code></pre></li><li><p>Build the NavBar using Link (not &lt;a&gt; tags) to avoid full page reloads.</p></li><li><p>Inside Contact.jsx, create a controlled input tied to useState:</p><pre><code>const [message, setMessage] = useState(&#x27;&#x27;);
+
+&lt;input value={message} onChange={(e) =&gt; setMessage(e.target.value)} /&gt;</code></pre></li><li><p>Add a second useState variable to toggle visibility of an element (e.g., a help tooltip).</p></li><li><p>Test navigation across all 3 routes and confirm no page reload occurs.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Emphasize Link vs &lt;a&gt;: this is the most common point of confusion for students new to SPA routing.</li><li>Live-demo useState updating the UI in real time before students attempt the Contact form.</li><li>Check that BrowserRouter wraps the App only once, typically in main.jsx, not repeated elsewhere.</li><li>Walk through how routes map to components before students start writing code.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Using &lt;a href=&quot;...&quot;&gt; instead of &lt;Link to=&quot;...&quot;&gt;, causing full page reloads.</li><li>Forgetting to wrap the app in BrowserRouter, resulting in a &#x27;useRoutes() may be used only in the context of a Router&#x27; error.</li><li>Using props instead of state for values that should change dynamically (like form input).</li><li>Not providing a unique path for each Route, causing routes to render incorrectly.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Blank page after adding routes</td><td>BrowserRouter not wrapping App component</td><td>Confirm BrowserRouter wraps &lt;App /&gt; in main.jsx</td></tr><tr><td>Clicking nav link reloads page</td><td>Used &lt;a&gt; tag instead of &lt;Link&gt;</td><td>Replace all navigation anchors with &lt;Link to=&quot;...&quot;&gt; from react-router-dom</td></tr><tr><td>Form input not updating on typing</td><td>Missing onChange handler or value not tied to state</td><td>Ensure input has both value={state} and onChange={setState}</td></tr><tr><td>Route shows wrong component</td><td>Path mismatch or routes defined in wrong order</td><td>Double check path strings match exactly; order routes from specific to general</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a 404 Not Found route for any undefined path.</li><li>Implement a dark/light mode toggle using a second useState variable.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as Practical 1, updated with new commits</li><li>Working multi-route app with NavBar, Home, Projects, Contact</li><li>At least one commit specifically for routing implementation</li><li>Updated README noting new routes added</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-1/index.html"><span>← Previous</span>Practical 1: Introduction to React and Component Architecture</a><a class="next" href="../practical-3/index.html"><span>Next →</span>Practical 3: API Integration and Data Rendering in React</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

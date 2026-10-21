@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 7: Authentication and Middleware Pipeline</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 7 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Authentication and Middleware Pipeline</h1>
+<div class="chips"><span class="chip">CO/PO: CO2, CO6 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To implement JWT-based authentication and input validation as part of the Express middleware pipeline.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to implement a complete authentication flow using JWT, protect backend routes with middleware, and enforce server-side input validation.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practical 6 completed working full-stack Task Management application</li><li>Basic understanding of hashing and tokens (conceptual, covered in self-study material)</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>bcryptjs, jsonwebtoken</li><li>Express.js, Mongoose</li><li>Postman (for token-based testing)</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 7 IBM: Node.js &amp; MongoDB Developing Back-end Database Applications, Module 4 (authentication and authorization, JWT token generation, error handling middleware, request validation and sanitization).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Add user registration and login functionality to the Task Management application.</li><li>Hash passwords using bcrypt before saving the User document to MongoDB.</li><li>Implement JWT token generation on successful login, with a reasonable expiry (e.g., 1 hour).</li><li>Protect all task routes using an authentication middleware that verifies the JWT.</li><li>Add server-side input validation that rejects malformed requests (e.g., missing title) before they reach the database.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>Why must passwords be hashed before storage instead of saved as plain text, even in a lab/demo project?</li><li>What does the authentication middleware actually verify, and what happens if the token is missing or expired?</li><li>Why should input validation happen on the server even if the frontend already validates the same fields?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a /me endpoint that returns the currently logged-in user&#x27;s details using the decoded JWT.</li><li>Implement token expiry handling on the frontend: redirect to login if a protected request returns 401.</li><li>Add a logout mechanism that clears the token from the client.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Hashing passwords securely using bcrypt</li><li>Generating and verifying JWT tokens</li><li>Writing authentication middleware to protect routes</li><li>Implementing server-side input validation and sanitization</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>POST /register → hash password → save User → 201
+POST /login    → verify password → sign JWT → return token
+
+Protected Route Flow:
+Client Request (Authorization: Bearer &lt;token&gt;)
+        |
+        v
+ [Auth Middleware] → verifies token → req.user set
+        |
+        v
+ [Validation Middleware] → checks input
+        |
+        v
+ Controller (task routes)</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Install required packages:</p><pre><code>npm install bcryptjs jsonwebtoken</code></pre></li><li><p>Create a User schema with email and hashed password fields.</p></li><li><p>Implement the register route: hash the password before saving:</p><pre><code>const hashedPassword = await bcrypt.hash(password, 10);
+const user = await User.create({ email, password: hashedPassword });</code></pre></li><li><p>Implement the login route: compare password and sign a JWT:</p><pre><code>const isMatch = await bcrypt.compare(password, user.password);
+const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: &#x27;1h&#x27; });</code></pre></li><li><p>Create an auth middleware that verifies the token from the Authorization header:</p><pre><code>const token = req.headers.authorization?.split(&#x27; &#x27;)[1];
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+req.user = decoded;</code></pre></li><li><p>Apply the auth middleware to all task routes.</p></li><li><p>Add a validation middleware that checks required fields exist before reaching the controller.</p></li><li><p>Test the full flow in Postman: register → login → copy token → access protected task routes.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Walk through why bcrypt and not plain SHA hashing is used: bcrypt is intentionally slow and salts automatically, which matters for security.</li><li>Demonstrate testing protected routes in Postman using the Authorization header with Bearer &lt;token&gt; before students attempt the frontend.</li><li>Emphasize JWT_SECRET must come from .env, never hardcoded. Connect this back to the secure storage principle in the syllabus.</li><li>Reserve time to show what happens with an expired or tampered token: this builds real understanding of why verification matters.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Storing passwords as plain text or using a reversible encryption instead of bcrypt hashing.</li><li>Forgetting to send the Authorization header when testing protected routes, then assuming the middleware is broken.</li><li>Hardcoding the JWT secret directly in code instead of using an environment variable.</li><li>Not handling the case where jwt.verify() throws on an invalid/expired token, crashing the server.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>401 Unauthorized on every request</td><td>Authorization header missing or malformed in Postman/client</td><td>Set header as Authorization: Bearer &lt;token&gt; exactly, including the space after Bearer</td></tr><tr><td>Server crashes on invalid token</td><td>jwt.verify() not wrapped in try/catch</td><td>Wrap token verification in try/catch and return 401 on failure instead of letting it throw uncaught</td></tr><tr><td>Login always fails even with correct password</td><td>Comparing plain password to hashed password directly instead of using bcrypt.compare</td><td>Use bcrypt.compare(plainPassword, hashedPassword) rather than ===</td></tr><tr><td>JWT_SECRET is undefined</td><td>.env file not loaded or variable name mismatch</td><td>Confirm dotenv.config() runs before JWT_SECRET is used and the .env key name matches exactly</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a /me endpoint that returns the logged-in user&#x27;s details from the decoded token.</li><li>Implement basic frontend handling for 401 responses (redirect to a login prompt).</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as Practical 6, updated with new commits</li><li>Working register/login flow with JWT-protected task routes</li><li>.env excluded via .gitignore; JWT_SECRET never committed</li><li>At least one commit specifically for authentication implementation</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-6/index.html"><span>← Previous</span>Practical 6: Full Stack Integration: React + Node + MongoDB</a><a class="next" href="../practical-8/index.html"><span>Next →</span>Practical 8: Performance Optimization and Lazy Loading in React</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

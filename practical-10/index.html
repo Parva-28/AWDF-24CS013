@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 10: Asynchronous Processing with Event-Driven Architecture</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 10 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Asynchronous Processing with Event-Driven Architecture</h1>
+<div class="chips"><span class="chip">CO/PO: CO4 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To implement asynchronous background processing using Node.js native EventEmitter without external dependencies.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to implement non-blocking, event-driven background processing using Node&#x27;s built-in EventEmitter and explain how it keeps the main request-response cycle fast.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practicals 4–9 completed working Node/Express/MongoDB backend with caching</li><li>Basic understanding of synchronous vs asynchronous execution in JavaScript</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+) built-in events module</li><li>Express.js, Mongoose</li><li>Postman or Thunder Client</li><li>Visual Studio Code</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> No dedicated Coursera module for this topic. Refer to the Node.js official documentation on Events (nodejs.org/en/docs/guides/event-loop-timers-and-nexttick), supplemented by the Node.js Crash Course on the Traversy Media YouTube channel.</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Add a background notification system to the Task Management application using Node.js built-in EventEmitter.</li><li>When a new task is created via the API, emit a task-created event handled asynchronously.</li><li>The event handler must log a notification (task title, timestamp, assigned user) without blocking the main response.</li><li>The main API response must return immediately, before the event handler finishes executing.</li><li>Demonstrate the difference between synchronous and asynchronous handling by logging timestamps at both the API response point and the event handler execution point.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>Why does emitting an event not block the API response, even though both run on the same Node.js process?</li><li>What would happen to API response time if the notification logic were placed directly inside the POST route instead of in an event handler?</li><li>Why is EventEmitter a reasonable choice for this scale of application, but not for a production system handling millions of events per day?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a second event, task-deleted, with its own listener that logs a different message.</li><li>Add an error event listener that catches and logs any error thrown inside the task-created handler.</li><li>Simulate a slow notification handler (e.g., setTimeout of 2 seconds) and confirm the API still responds instantly.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Using Node.js built-in EventEmitter to decouple side effects from the main request flow</li><li>Designing non-blocking background processing without external message queue infrastructure</li><li>Understanding the Node.js event loop at a practical, applied level</li><li>Comparing synchronous and asynchronous execution using timestamp evidence</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>POST /tasks request
+      |
+      v
+ Save task to MongoDB
+      |
+      v
+ emit(&#x27;task-created&#x27;, taskData)  ──► API responds immediately (201)
+      |
+      v  (handled asynchronously, after response sent)
+ Notification Listener
+   └── logs: task title, timestamp, assigned user</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Create a dedicated events.js module:</p><pre><code>const EventEmitter = require(&#x27;events&#x27;);
+
+class TaskEvents extends EventEmitter {}
+
+module.exports = new TaskEvents();</code></pre></li><li><p>Register a listener for the task-created event, ideally in a separate listeners.js file:</p><pre><code>const taskEvents = require(&#x27;./events&#x27;);
+
+taskEvents.on(&#x27;task-created&#x27;, (task) =&gt; {
+  console.log(`[Notification] Task &quot;${task.title}&quot; created at ${new Date().toISOString()}`);
+});</code></pre></li><li><p>Inside the POST /tasks route, emit the event right after saving the task, then respond immediately:</p><pre><code>const task = await Task.create(req.body);
+console.log(`[API] Response sent at ${new Date().toISOString()}`);
+res.status(201).json(task);
+taskEvents.emit(&#x27;task-created&#x27;, task);</code></pre></li><li><p>Run the server and create a task via Postman; observe the console log order.</p></li><li><p>Add an artificial delay inside the listener (e.g., a loop or setTimeout) to make the asynchronous behavior more visible.</p></li><li><p>Confirm and record that the API response timestamp appears before the listener&#x27;s completion timestamp in the console.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Clarify upfront that this practical replaces a message-queue-based approach (e.g., RabbitMQ/Bull/Redis), which is out of scope for this course. EventEmitter is the deliberate, simpler substitute.</li><li>Emphasize that emit() does not wait for listeners to finish. This is the core concept being tested and is easy to misunderstand as &#x27;asynchronous magic&#x27;.</li><li>Use the console.log timestamp ordering as the main proof point during evaluation rather than relying on student explanation alone.</li><li>Connect this practical back to Practical 9&#x27;s caching discussion: both are examples of decoupling work from the critical request path.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Placing taskEvents.emit() before res.status(201).json(task), which still works but obscures the ordering being demonstrated. Emitting after the response logic is clearer pedagogically.</li><li>Writing notification logic directly inside the route handler instead of in a separate listener, defeating the purpose of the exercise.</li><li>Not adding any artificial delay or distinguishing log statements, making the synchronous vs asynchronous difference invisible in the console output.</li><li>Forgetting to register the listener (taskEvents.on(...)) before the event is ever emitted, causing the event to silently do nothing.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Notification log never appears</td><td>Listener file never required/imported, so .on() was never registered</td><td>Ensure the listeners file is required once at server startup, e.g., in server.js</td></tr><tr><td>API response feels delayed</td><td>Listener logic accidentally placed before the response is sent, or emit() called synchronously before res.json()</td><td>Move res.status(201).json(task) to execute before taskEvents.emit(...)</td></tr><tr><td>Unhandled &#x27;error&#x27; event crashes the server</td><td>EventEmitter has a special case: an unhandled &#x27;error&#x27; event throws</td><td>Always register an error listener if emitting custom error events, or avoid using the reserved &#x27;error&#x27; event name</td></tr><tr><td>Timestamps appear identical</td><td>No artificial delay added to the listener to make async timing visible</td><td>Add a short setTimeout or loop inside the listener to exaggerate the timing difference for demonstration</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the Node.js Events documentation before next week.</li><li>Add a task-deleted event with its own listener and distinct log message.</li><li>Add an error event listener that catches and logs any error thrown inside the task-created handler.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as Practical 4/5/9, updated with new commits</li><li>Working EventEmitter-based notification system with at least one custom event</li><li>Console log evidence (screenshot or recording) showing response-before-handler timestamp ordering</li><li>At least one commit specifically for event-driven async processing</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-9/index.html"><span>← Previous</span>Practical 9: In-Memory Caching and Query Optimization</a><a class="next" href="../practical-11/index.html"><span>Next →</span>Practical 11: Containerization with Docker and Docker Compose</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 6: Full Stack Integration: React + Node + MongoDB</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 6 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>Full Stack Integration: React + Node + MongoDB</h1>
+<div class="chips"><span class="chip">CO/PO: CO1, CO2 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To wire the React frontend to the Node/Express/MongoDB backend into a fully functional full-stack application.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to integrate a React frontend with a Node/Express/MongoDB backend into a complete, working full-stack application with proper state synchronization.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practicals 1–3 completed working React UI with routing and API consumption patterns</li><li>Practicals 4–5 completed working Node/Express/MongoDB backend with CRUD</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>Node.js (v18+), npm</li><li>React 18+, Express.js, Mongoose</li><li>cors package</li><li>Postman (for backend verification), Browser DevTools</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 6 IBM: Node.js &amp; MongoDB Developing Back-end Database Applications, Module 3 (connecting frontend to backend, end-to-end API calls, full-stack flow).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Connect the React Task UI to the Node+MongoDB backend built in Practicals 4 and 5.</li><li>Replace the GitHub repo data from Practical 3 with task data from your own backend.</li><li>The application must support creating, viewing, updating, and deleting tasks from the React interface through API calls.</li><li>All data must be persisted in MongoDB, confirmed by refreshing the browser and seeing data remain.</li><li>Handle loading and error states for every API interaction, not just the initial fetch.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>What changes are required on the backend (CORS) to allow the React dev server to call the Express API?</li><li>Why should the UI re-fetch or update local state after a successful POST/PUT/DELETE rather than assuming success silently?</li><li>What is the risk of not handling errors on write operations (POST/PUT/DELETE) the same way as read operations (GET)?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add an optimistic UI update for task creation: show the new task in the list immediately, before the server confirms.</li><li>Add a confirmation dialog before deleting a task.</li><li>Add a toast/notification component that shows success or failure after each operation.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Configuring CORS on an Express server for local frontend-backend communication</li><li>Calling backend CRUD endpoints from React using fetch or axios</li><li>Synchronizing UI state with server state after write operations</li><li>Handling loading and error states across multiple API interactions in one component</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>React Frontend (localhost:5173)
+        | fetch/axios calls
+        v
+Express Backend (localhost:5000)
+        | Mongoose
+        v
+   MongoDB Database
+
+Flow: UI Form → POST /tasks → MongoDB → UI re-fetches → updated list rendered</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Install and configure CORS on the Express backend:</p><pre><code>npm install cors
+
+const cors = require(&#x27;cors&#x27;);
+app.use(cors());</code></pre></li><li><p>In React, create a central api.js file with the base backend URL:</p><pre><code>const BASE_URL = &#x27;http://localhost:5000&#x27;;
+
+export const getTasks = () =&gt; fetch(`${BASE_URL}/tasks`).then((res) =&gt; res.json());</code></pre></li><li><p>Replace the Practical 3 GitHub fetch logic with calls to your own /tasks endpoint.</p></li><li><p>Build a task creation form that POSTs to /tasks and updates local state on success.</p></li><li><p>Implement update (PUT) and delete (DELETE) actions, each followed by a state update or re-fetch.</p></li><li><p>Wrap each API call in proper loading/error handling, reusing the pattern from Practical 3.</p></li><li><p>Test the complete flow: create → view → update → delete, refreshing the browser to confirm persistence.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>This is the first practical where two dev servers (React on 5173, Express on 5000) must run simultaneously. Demonstrate running both in separate terminals before students attempt it.</li><li>CORS errors are the single most common blocker in this session. Show what a CORS error looks like in the browser console before students hit it themselves.</li><li>Stress that frontend state should be updated based on the backend response, not assumed. This is the core integration concept being tested.</li><li>Reserve the last 15 minutes for a full end-to-end demo check: create, edit, delete, and refresh.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Forgetting to start the backend server, then debugging the frontend for an unrelated &#x27;fetch failed&#x27; error.</li><li>Not enabling CORS, resulting in browser console errors blocking all requests.</li><li>Updating local UI state optimistically without confirming the backend write actually succeeded.</li><li>Hardcoding the backend URL inconsistently across multiple files instead of using one shared base URL constant.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>CORS error in browser console</td><td>cors middleware not enabled on Express server</td><td>Run npm install cors and add app.use(cors()) before route definitions</td></tr><tr><td>fetch failed / Network Error</td><td>Backend server not running or wrong port</td><td>Confirm Express server is running on port 5000 in a separate terminal</td></tr><tr><td>UI shows stale data after edit/delete</td><td>Local state not updated after successful API call</td><td>Re-fetch the task list or manually update state array after each write operation</td></tr><tr><td>Data disappears after refresh</td><td>Still reading from local component state instead of backend</td><td>Confirm GET /tasks is called on mount and populates state from the database, not hardcoded values</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a confirmation dialog before deleting a task.</li><li>Add a simple toast notification for successful create/update/delete actions.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Two repositories (or one monorepo) clearly separating frontend and backend</li><li>Working end-to-end flow: create, read, update, delete tasks from the UI</li><li>README with instructions to run both frontend and backend locally</li><li>At least one commit specifically for full-stack integration</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-5/index.html"><span>← Previous</span>Practical 5: MongoDB Integration and Schema Design with Mongoose</a><a class="next" href="../practical-7/index.html"><span>Next →</span>Practical 7: Authentication and Middleware Pipeline</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

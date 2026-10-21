@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practical 12: CI/CD Pipeline with GitHub Actions</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<a class="back" href="../index.html">← All practicals</a>
+<header class="hero">
+<p class="eyebrow">Practical 12 · ITUE301 Advanced Web Development Frameworks</p>
+<h1>CI/CD Pipeline with GitHub Actions</h1>
+<div class="chips"><span class="chip">CO/PO: CO5 / PO3, PO5</span><span class="chip">2 hours</span><span class="chip">10-mark rubric</span></div>
+</header>
+<div class="grid">
+<section class="card"><h2>Objective</h2><p>To automate testing and deployment of the application using a CI/CD pipeline.</p></section><section class="card"><h2>Learning outcome</h2><p>Students will be able to set up a basic CI pipeline using GitHub Actions that automatically installs dependencies and runs tests on every push, and will be able to diagnose a failing pipeline from its logs.</p></section><section class="card"><h2>Prerequisites</h2><ul><li>Practical 11 completed containerized full-stack application</li><li>GitHub account with the project repository already pushed</li><li>Basic understanding of YAML syntax</li></ul></section><section class="card"><h2>Tools and resources</h2><ul><li>GitHub account and repository</li><li>GitHub Actions (no separate install required)</li><li>Jest or a similar Node.js testing library</li><li>Git CLI, Visual Studio Code</li></ul></section><section class="card"><h2>Theory (self-study)</h2><p><strong>Coursera pointer.</strong> See Week 12 GitHub Actions Masterclass (Packt), Module 1 (workflow basics, triggers, jobs, steps) and Module 2 (CI/CD pipeline setup, automated testing on push).</p></section><section class="card"><h2>Total hours</h2><ul><li>Lab session: 2 hours</li><li>Implementation: 1.5 hours</li><li>Testing / modification: 0.5 hours</li><li>Total engagement: 2 hours</li></ul></section><section class="card"><h2>Problem statement</h2><ul><li>Set up a GitHub Actions workflow for the Task Management application that runs automatically on every push to the main branch.</li><li>The pipeline must install dependencies (npm install) as a defined step.</li><li>The pipeline must run at least one automated test and report a clear pass/fail status.</li><li>Demonstrate a failed pipeline caused by a deliberately broken test.</li><li>Demonstrate a fixed pipeline that passes after the test is corrected.</li></ul></section><section class="card"><h2>Key questions and analysis</h2><ul><li>What is the difference between Continuous Integration and Continuous Deployment, and which one does this practical actually demonstrate?</li><li>Why does running tests automatically on every push catch problems earlier than testing manually before a release?</li><li>What would happen to the pipeline if the test file path were incorrect? Would the workflow fail at the same step as a genuine test failure?</li></ul></section><section class="card"><h2>Supplementary problems</h2><ul><li>Add a second job that runs a linter (e.g., ESLint) before the test job.</li><li>Configure the workflow to run only on pull requests targeting main, not on every direct push.</li><li>Add a status badge to the README that reflects the current pipeline status.</li></ul></section><section class="card"><h2>Key skills addressed</h2><ul><li>Writing a GitHub Actions workflow YAML file</li><li>Configuring triggers, jobs, and steps for a CI pipeline</li><li>Writing at least one automated test that can run in CI</li><li>Reading and interpreting CI pipeline logs and pass/fail status</li></ul></section><section class="card wide"><h2>Architecture and diagram</h2><pre><code>git push origin main
+      |
+      v
+ GitHub Actions Trigger (on: push)
+      |
+      v
+ Job: build-and-test
+   ├── Checkout code
+   ├── Setup Node.js
+   ├── npm install
+   ├── Run tests
+   └── Report pass / fail status
+      |
+      v
+ Green checkmark (pass) or Red X (fail) on GitHub</code></pre></section><section class="card wide"><h2>Lab session step-by-step</h2><ol><li><p>Install a basic testing library in the backend project:</p><pre><code>npm install --save-dev jest supertest</code></pre></li><li><p>Write at least one simple test (e.g., testing the GET /tasks endpoint returns status 200):</p><pre><code>test(&#x27;GET /tasks returns 200&#x27;, async () =&gt; {
+  const res = await request(app).get(&#x27;/tasks&#x27;);
+  expect(res.statusCode).toBe(200);
+});</code></pre></li><li><p>Create the workflow file at .github/workflows/ci.yml:</p><pre><code>name: CI Pipeline
+on:
+  push:
+    branches: [main]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm install
+      - run: npm test</code></pre></li><li><p>Commit and push the workflow file; confirm it appears under the Actions tab on GitHub.</p></li><li><p>Deliberately break the test (change an expected value) and push again. Observe the red X / failed status.</p></li><li><p>Fix the test and push again. Observe the pipeline turn green.</p></li><li><p>Take screenshots of both the failed and passed pipeline runs for the lab journal.</p></li></ol></section><section class="card"><h2>Faculty teaching guide</h2><ul><li>Confirm GitHub access and internet connectivity in the lab before this session. The entire practical depends on it.</li><li>Walk through the Actions tab UI together first so students know where to find pipeline runs and logs before debugging on their own.</li><li>Make the deliberate test failure a required step, not optional. Seeing a red X and reading the failure log is the core learning moment.</li><li>Keep the test itself trivial (e.g., a single status code check). The goal is understanding the pipeline mechanism, not testing depth.</li></ul></section><section class="card"><h2>Common mistakes</h2><ul><li>Placing the workflow YAML file in the wrong path (must be exactly .github/workflows/&lt;name&gt;.yml).</li><li>Incorrect YAML indentation, causing the workflow to fail to even register on GitHub.</li><li>Writing a test that always passes trivially (e.g., expect(true).toBe(true)), which defeats the purpose of the demonstration.</li><li>Forgetting to push the workflow file itself, then wondering why nothing appears under the Actions tab.</li></ul></section><section class="card wide"><h2>Troubleshooting guide</h2><div class="table-wrap"><table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Workflow does not appear under Actions tab</td><td>File not located at .github/workflows/ or has incorrect extension</td><td>Confirm the exact path .github/workflows/ci.yml and that it was committed and pushed</td></tr><tr><td>Workflow fails immediately with a YAML syntax error</td><td>Incorrect indentation in the YAML file</td><td>YAML is indentation-sensitive; use consistent 2-space indentation and avoid tabs</td></tr><tr><td>npm test fails with &quot;no test specified&quot;</td><td>package.json test script not configured to run Jest</td><td>Set &quot;scripts&quot;: { &quot;test&quot;: &quot;jest&quot; } in package.json</td></tr><tr><td>Pipeline passes even with a broken test</td><td>Test was written incorrectly and does not actually assert the intended behavior</td><td>Review the test logic to confirm it fails when the code is genuinely broken</td></tr></tbody></table></div></section><section class="card"><h2>Post-lab assignment</h2><ul><li>Review the Theory Concepts section and the assigned Coursera module before next week.</li><li>Add a second automated test covering a different endpoint.</li><li>Add a status badge to the project README reflecting the current CI pipeline status.</li></ul></section><section class="card"><h2>GitHub deliverables</h2><ul><li>Same repository as previous practicals, updated with new commits</li><li>Working .github/workflows/ci.yml with install and test steps</li><li>Screenshots of both a failed and a passed pipeline run included in README or docs folder</li><li>At least one commit specifically for CI pipeline setup</li></ul></section><section class="card wide"><h2>Rubric (practical evaluation / viva)</h2><div class="table-wrap"><table><thead><tr><th>Criteria (marks)</th><th>Marks</th><th>Description</th></tr></thead><tbody><tr><td>Conceptual understanding</td><td>2</td><td>Explains what and why, not just what was done</td></tr><tr><td>Implementation</td><td>4</td><td>Code written, runs, and is original</td></tr><tr><td>Correctness</td><td>2</td><td>Output matches expected result</td></tr><tr><td>Reflection</td><td>1</td><td>Errors documented and explained</td></tr><tr><td>Lab file evidence</td><td>1</td><td>Completeness and presentation</td></tr></tbody></table></div><p class="note">Total 10 marks · passing threshold 5 / 10 (50%)</p></section>
+</div>
+<nav class="pager"><a href="../practical-11/index.html"><span>← Previous</span>Practical 11: Containerization with Docker and Docker Compose</a><a class="next" href="../practical-13/index.html"><span>Next →</span>Practical 13: AI API Integration into a Web Application</a></nav>
+<footer>Charotar University of Science and Technology · Chandubhai S Patel Institute of Technology · DEPSTAR</footer>
+</main>
+</body>
+</html>

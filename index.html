@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITUE301 Lab Practicals</title>
+<style>
+:root{--bg:#f5f7fa;--card:#ffffff;--text:#1c2430;--muted:#5a6575;--border:#dde3eb;--accent:#1f4e79;--accent-soft:#e9eff6;--code:#f2f5f9}
+@media (prefers-color-scheme: dark){
+ :root:not([data-theme="light"]){--bg:#0e141c;--card:#161f2b;--text:#e4eaf2;--muted:#9aa6b6;--border:#2a3547;--accent:#8db7e0;--accent-soft:#1b2a3c;--code:#0b1118}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15.5px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1080px;margin:0 auto;padding:28px 16px 56px}
+.back{display:inline-block;font-size:14px;margin-bottom:14px;color:var(--muted)}
+.hero{background:var(--card);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:14px;padding:26px 28px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0 0 14px;font-weight:700}
+.lede{margin:0 0 14px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-block;font-size:13px;padding:3px 11px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;min-width:0}
+.card.wide{grid-column:1/-1}
+.card h2{margin:0 0 12px;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.card p{margin:0 0 10px}
+.card>:last-child{margin-bottom:0}
+ul,ol{margin:0;padding-left:21px}
+li{margin:5px 0}
+li::marker{color:var(--muted)}
+ol>li>p{margin:0 0 6px}
+pre{margin:8px 0 4px;background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;overflow-x:auto;font:13px/1.55 Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace}
+code{font-family:Consolas,"Cascadia Mono","SFMono-Regular",Menlo,monospace;font-size:.9em}
+p code,li code,td code{background:var(--code);border:1px solid var(--border);padding:1px 5px;border-radius:5px}
+pre code{background:none;border:0;padding:0}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.note{margin-top:12px;font-size:14px;color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;flex-wrap:wrap}
+.pager a{flex:1 1 240px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text)}
+.pager a span{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.pager a:hover{border-color:var(--accent);text-decoration:none}
+.pager .next{text-align:right}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font-size:22px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.group{margin-top:30px}
+.group h2{margin:0;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.blurb{margin:2px 0 12px;color:var(--muted);font-size:14px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;color:var(--text)}
+.pcard:hover{border-color:var(--accent);text-decoration:none}
+.pcard .num{font-size:12px;font-weight:700;color:var(--accent);letter-spacing:.08em;text-transform:uppercase}
+.pcard h3{font-size:16.5px;margin:6px 0 8px;line-height:1.35;font-weight:650}
+.pcard p{margin:0 0 12px;font-size:14px;color:var(--muted);flex:1}
+.pcard .chip{align-self:flex-start}
+footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:760px){
+ .grid{grid-template-columns:1fr}
+ .hero{padding:20px}
+ h1{font-size:23px}
+ .card{padding:18px}
+ .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+<p class="eyebrow">ITUE301 · Advanced Web Development Frameworks</p>
+<h1>Lab Practicals 1–13</h1>
+<p class="lede">Charotar University of Science and Technology · Faculty of Technology and Engineering · B.Tech (IT/CE/CSE/AIML)</p>
+<p class="lede" style="margin:0">Thirteen practicals that build one application step by step: a React portfolio, a Task Management app with an Express and MongoDB backend, authentication, performance work, Docker, CI, and an AI feature.</p>
+</header>
+<div class="stats"><div class="stat"><b>13</b><span>Practicals</span></div><div class="stat"><b>2 hrs</b><span>Per practical</span></div><div class="stat"><b>10</b><span>Marks per rubric</span></div><div class="stat"><b>5 / 10</b><span>Passing threshold</span></div></div>
+<section class="group"><h2>Part I · Frontend with React</h2><p class="blurb">Components, routing, and consuming an API</p><div class="pgrid"><a class="pcard" href="practical-1/index.html"><span class="num">Practical 1</span><h3>Introduction to React and Component Architecture</h3><p>Scaffold a React app with Vite and build a portfolio page from reusable, prop-driven components.</p><span class="chip">CO1 / PO3, PO5</span></a><a class="pcard" href="practical-2/index.html"><span class="num">Practical 2</span><h3>State Management and Routing in React</h3><p>Add React Router and useState to the portfolio: multi-page navigation, a controlled form, and a theme toggle.</p><span class="chip">CO1 / PO3, PO5</span></a><a class="pcard" href="practical-3/index.html"><span class="num">Practical 3</span><h3>API Integration and Data Rendering in React</h3><p>Fetch a public REST API inside useEffect, with proper loading, error, and retry states.</p><span class="chip">CO1 / PO3, PO5</span></a></div></section><section class="group"><h2>Part II · Backend with Node and Express</h2><p class="blurb">REST endpoints, the database, and schemas</p><div class="pgrid"><a class="pcard" href="practical-4/index.html"><span class="num">Practical 4</span><h3>Building a RESTful API with Node.js and Express</h3><p>Build a Task Management CRUD API with logging middleware, correct status codes, and centralized error handling.</p><span class="chip">CO2 / PO3, PO5</span></a><a class="pcard" href="practical-5/index.html"><span class="num">Practical 5</span><h3>MongoDB Integration and Schema Design with Mongoose</h3><p>Replace the in-memory array with a MongoDB Task model that enforces validation through a Mongoose schema.</p><span class="chip">CO2, CO3 / PO3, PO5</span></a></div></section><section class="group"><h2>Part III · Integration and security</h2><p class="blurb">Wiring the full stack and protecting it</p><div class="pgrid"><a class="pcard" href="practical-6/index.html"><span class="num">Practical 6</span><h3>Full Stack Integration: React + Node + MongoDB</h3><p>Connect the React UI to the Express and MongoDB backend so tasks can be created, viewed, updated, and deleted.</p><span class="chip">CO1, CO2 / PO3, PO5</span></a><a class="pcard" href="practical-7/index.html"><span class="num">Practical 7</span><h3>Authentication and Middleware Pipeline</h3><p>Add bcrypt password hashing, JWT login, a protected route middleware, and server-side validation.</p><span class="chip">CO2, CO6 / PO3, PO5</span></a></div></section><section class="group"><h2>Part IV · Performance and architecture</h2><p class="blurb">Lazy loading, caching, and event-driven code</p><div class="pgrid"><a class="pcard" href="practical-8/index.html"><span class="num">Practical 8</span><h3>Performance Optimization and Lazy Loading in React</h3><p>Code-split the route components with React.lazy and Suspense, then measure the before and after bundle.</p><span class="chip">CO1 / PO3, PO5</span></a><a class="pcard" href="practical-9/index.html"><span class="num">Practical 9</span><h3>In-Memory Caching and Query Optimization</h3><p>Cache GET /tasks with node-cache, invalidate on every write, and measure cached versus uncached response times.</p><span class="chip">CO2, CO4 / PO3, PO5</span></a><a class="pcard" href="practical-10/index.html"><span class="num">Practical 10</span><h3>Asynchronous Processing with Event-Driven Architecture</h3><p>Decouple task-created notifications from the request with Node&#x27;s built-in EventEmitter, and prove the ordering with timestamps.</p><span class="chip">CO4 / PO3, PO5</span></a></div></section><section class="group"><h2>Part V · Deployment and AI</h2><p class="blurb">Containers, CI pipelines, and an AI feature</p><div class="pgrid"><a class="pcard" href="practical-11/index.html"><span class="num">Practical 11</span><h3>Containerization with Docker and Docker Compose</h3><p>Write Dockerfiles for the frontend and backend, then run the whole stack with one docker-compose up command.</p><span class="chip">CO5 / PO3, PO5</span></a><a class="pcard" href="practical-12/index.html"><span class="num">Practical 12</span><h3>CI/CD Pipeline with GitHub Actions</h3><p>Add a GitHub Actions workflow that installs dependencies and runs Jest tests on every push, then watch it fail and recover.</p><span class="chip">CO5 / PO3, PO5</span></a><a class="pcard" href="practical-13/index.html"><span class="num">Practical 13</span><h3>AI API Integration into a Web Application</h3><p>Add a server-side AI description generator with graceful failure handling, a loading state, and responsible-use notes.</p><span class="chip">CO6 / PO3, PO5, PO12</span></a></div></section>
+<footer>Built from the practical sheets 1.pdf to 13.pdf</footer>
+</main>
+</body>
+</html>
