@@ -1,0 +1,11 @@
+GitHub Actions run 39592596513 – job build-and-test, step "Run npm test" (failed lines only)
+
+    not ok 4 - GET /tasks returns 200
+      expected: 201
+      actual: 200
+      operator: 'strictEqual'
+not ok 1 - Task API
+# tests 7
+# pass 6
+# fail 1
+##[error]Process completed with exit code 1.

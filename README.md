@@ -24,10 +24,9 @@ Open `index.html` for the practical guide pages. Each `practical-N/` folder hold
 
 ## Still to add before submitting
 
-Each submission document already has the name, student ID, header and GitHub link filled in. Three items marked **TO ADD** need screenshots that could not be produced on the machine used to build this:
+Each submission document already has the name, student ID, header and GitHub link filled in. Two items marked **TO ADD** need screenshots that could not be produced on the machine used to build this:
 
 - Practical 11: `docker-compose up --build` and `docker ps` (Docker was not available).
-- Practical 12: one failed and one passed run from the GitHub Actions tab.
 - Practical 13: a suggestion made with a real `OPENAI_API_KEY` (the included success screenshot is a simulated response).
 
 ## Running the server practicals

@@ -25,9 +25,12 @@ Run with `npm test` (Node's built-in test runner plus `supertest`):
 
 Why not Jest: Jest was installed first, but inside Jest's sandbox the MongoDB 7 driver's handshake fails ("Missing required sub-document 'driver' in the client metadata document"). The same code connects normally under plain Node, so the tests use `node:test`, which the handout allows as "a similar Node.js testing library".
 
-## Failing, then fixed
+## Failing, then fixed (on GitHub)
 
-Local evidence is in `output/`. The expected status was changed from 200 to 201 on purpose, and the test failed (`actual: 200, expected: 201`, exit code 1). Restoring it made all 7 tests pass. To see the red X and green check on GitHub, push one commit with the broken assertion and then one with the fix, and screenshot both runs from the Actions tab.
+1. Commit "deliberately break a test" changed the expected status of `GET /tasks` from 200 to 201. Run #2 failed (`expected: 201, actual: 200`, 6 passed / 1 failed, exit code 1).
+2. Commit "fix the test" restored 200. Run #3 passed.
+
+Screenshots of both runs and the failure log are in `output/` (`12.5`–`12.8`). The same experiment run locally is in `12.2` and `12.3`.
 
 ## Run locally
 
