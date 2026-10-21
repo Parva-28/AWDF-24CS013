@@ -1,0 +1,13 @@
+◇ injected env (2) from .env
+MongoDB connected
+Server running on port 5000
+GET /tasks - 2026-10-21T10:52:27.715Z
+GET /tasks - 2026-10-21T10:53:01.574Z
+POST /tasks - 2026-10-21T10:53:04.255Z
+POST /tasks - 2026-10-21T10:53:04.614Z
+POST /tasks - 2026-10-21T10:53:04.730Z
+PUT /tasks/6ad89990b4f760ad9e374371 - 2026-10-21T10:53:04.890Z
+(node:12180) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+DELETE /tasks/6ad89990b4f760ad9e374373 - 2026-10-21T10:53:05.154Z
+GET /tasks - 2026-10-21T10:53:05.271Z

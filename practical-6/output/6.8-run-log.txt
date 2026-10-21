@@ -1,0 +1,21 @@
+1. Open /tasks (GET from MongoDB through Express)
+  GET /tasks -> 200
+2. Create a task while the POST is held for 1.5 s (optimistic UI)
+   Task shown before the server replied: ["Design the database schema"] (marked "Saving…")
+  POST /tasks -> 201
+3. Create two more tasks
+  POST /tasks -> 201
+  POST /tasks -> 201
+4. Mark the first task as done (PUT)
+  PUT /tasks/6ad89990b4f760ad9e374371 -> 200
+5. Delete "Write the README" with the confirmation dialog (DELETE)
+   Dialog text: Delete "Write the README"? This cannot be undone.
+  DELETE /tasks/6ad89990b4f760ad9e374373 -> 200
+6. Reload the browser: data comes back from MongoDB
+  GET /tasks -> 200
+   After reload: ["Design the database schema","Connect React to the API"]; done: ["Design the database schema"]
+7. Stop the Express server and reload (error state)
+   Error shown: Could not load tasks: Failed to fetch
+8. Start the server again and press Retry
+  GET /tasks -> 304
+   After Retry: ["Design the database schema","Connect React to the API"]
