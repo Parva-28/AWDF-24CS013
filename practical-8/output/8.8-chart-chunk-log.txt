@@ -1,0 +1,3 @@
+Login page: JS loaded so far: index-9-vH7YcP.js, taskApi-C-0EzTPS.js, Login-D9OR6CXv.js
+Tasks page with chart: JS loaded in total: index-9-vH7YcP.js, taskApi-C-0EzTPS.js, Login-D9OR6CXv.js, TaskBoard-Dsiz80Yv.js, TaskStats-ClwrFtGK.js
+TaskStats (recharts) chunk was requested only after opening /tasks: yes

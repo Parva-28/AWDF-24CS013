@@ -1,0 +1,3 @@
+Home ("/") loaded. JS files so far: index-9-vH7YcP.js
+700 ms after clicking Contact: fallback visible = yes ("Loading page…")
+Contact page rendered. New JS downloaded on demand: Contact-DMLGmLct.js

@@ -1,0 +1,11 @@
+BEFORE: all routes and chart imported statically (http://localhost:4801/)
+  JS files loaded: 1
+    index-Dqak-JF6.js  170.0 KB transferred
+  Total JS transferred: 170.0 KB
+  Load event (page timer): 7634 ms; wall clock to load: 7642 ms
+
+AFTER: React.lazy + Suspense (route and chart chunks) (http://localhost:4800/)
+  JS files loaded: 1
+    index-9-vH7YcP.js  76.8 KB transferred
+  Total JS transferred: 76.8 KB
+  Load event (page timer): 5721 ms; wall clock to load: 5730 ms

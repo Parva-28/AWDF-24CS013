@@ -1,0 +1,9 @@
+dist/index.html                      0.46 kB │ gzip:  0.30 kB
+dist/assets/index-djgL8A4T.css       5.85 kB │ gzip:  1.63 kB
+dist/assets/taskApi-C-0EzTPS.js      0.87 kB │ gzip:  0.50 kB
+dist/assets/Contact-DMLGmLct.js      1.05 kB │ gzip:  0.55 kB
+dist/assets/Login-D9OR6CXv.js        1.51 kB │ gzip:  0.75 kB
+dist/assets/TaskBoard-Dsiz80Yv.js    5.76 kB │ gzip:  2.11 kB
+dist/assets/index-9-vH7YcP.js      248.80 kB │ gzip: 79.00 kB
+dist/assets/TaskStats-ClwrFtGK.js  323.31 kB │ gzip: 94.95 kB
+✓ built in 436ms

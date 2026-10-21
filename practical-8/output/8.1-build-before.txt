@@ -1,0 +1,4 @@
+dist/index.html                   0.46 kB │ gzip:   0.30 kB
+dist/assets/index-djgL8A4T.css    5.85 kB │ gzip:   1.63 kB
+dist/assets/index-Dqak-JF6.js   579.04 kB │ gzip: 175.34 kB
+✓ built in 231ms
