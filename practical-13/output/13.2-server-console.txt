@@ -1,0 +1,25 @@
+MongoDB connected
+Server running on port 5000
+POST /auth/register - 2026-10-21T11:14:45.166Z
+POST /auth/login - 2026-10-21T11:14:45.414Z
+POST /api/ai/generate-description - 2026-10-21T11:14:45.614Z
+[AI] suggestion failed for "Prepare lab report": 401 Incorrect API key provided: sk-inval*******test. You can find your API key at https://platform.openai.com/account/api-keys.
+POST /api/ai/generate-description - 2026-10-21T11:14:50.089Z
+POST /api/ai/generate-description - 2026-10-21T11:14:50.184Z
+POST /tasks - 2026-10-21T11:14:50.243Z
+[API] Response sent at 2026-10-21T11:14:50.249Z
+[Notification] listener started at 2026-10-21T11:14:50.255Z for "Prepare lab report"
+POST /api/ai/generate-description - 2026-10-21T11:14:50.349Z
+[AI] suggestion failed for "Another task": 401 Incorrect API key provided: sk-inval*******test. You can find your API key at https://platform.openai.com/account/api-keys.
+[Notification] Task "Prepare lab report" created by ai-demo@example.com — notification finished at 2026-10-21T11:14:52.256Z
+MongoDB connected
+Server running on port 5000
+POST /auth/login - 2026-10-21T11:15:23.853Z
+GET /auth/me - 2026-10-21T11:15:24.332Z
+GET /tasks - 2026-10-21T11:15:24.337Z
+POST /api/ai/generate-description - 2026-10-21T11:15:26.000Z
+[AI] suggestion failed for "Organise team meeting": 401 Incorrect API key provided: sk-inval*******test. You can find your API key at https://platform.openai.com/account/api-keys.
+POST /tasks - 2026-10-21T11:15:27.558Z
+[API] Response sent at 2026-10-21T11:15:27.583Z
+[Notification] listener started at 2026-10-21T11:15:27.586Z for "Organise team meeting"
+[Notification] Task "Organise team meeting" created by ai-demo@example.com — notification finished at 2026-10-21T11:15:29.589Z

@@ -1,0 +1,5 @@
+Clicked "Suggest description (AI)": button shows "Generating…" while waiting (loading state)
+Real call with an invalid key -> fallback shown: "AI suggestions are unavailable right now. You can still write the description yourself."
+Task was still created normally while AI is unavailable
+SIMULATED success response: description field now holds "Book a room, share the agenda a day ahead, and note the action items with owners." with the disclaimer "AI-generated suggestion. Review and edit it before saving."
+Hosts the browser contacted: localhost:4900, localhost:5000 (no request to api.openai.com from the browser)

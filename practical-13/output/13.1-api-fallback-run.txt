@@ -1,0 +1,19 @@
+== Practical 13: AI route with an invalid OPENAI_API_KEY (graceful degradation) ==
+
+$ POST /api/ai/generate-description  {"title":"Prepare lab report"}
+{"description":"","fallback":true,"message":"AI suggestions are unavailable right now. You can still write the description yourself."}
+HTTP 200 in 4.415562s
+
+$ POST /api/ai/generate-description  (same title again within a minute)
+HTTP/1.1 429 Too Many Requests
+Retry-After: 56
+{"error":"Please wait 56 s before asking again for this task.","retryAfterSeconds":56}
+
+$ POST /api/ai/generate-description  (no token)
+{"error":"Missing or malformed Authorization header"}
+HTTP 401
+
+$ POST /tasks  (the core app keeps working while AI is down)
+HTTP 201
+
+Does any response contain the API key?  0 matches

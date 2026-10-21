@@ -1,0 +1,51 @@
+# Starts the whole stack with: docker-compose up --build
+services:
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db # named volume: data survives container restarts
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      # Inside the Compose network the database is reached by its service name, not localhost
+      MONGO_URI: mongodb://mongodb:27017/taskdb
+      PORT: "5000"
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-a-dot-env-file}
+      CACHE_TTL_SECONDS: "60"
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:5000
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

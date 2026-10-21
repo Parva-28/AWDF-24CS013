@@ -1,0 +1,18 @@
+$ npm test
+  ✔ requires a token (8.9954ms)
+  ✔ requires a title (14.3185ms)
+  ✔ returns a fallback instead of an error when the AI service is unavailable (8.7284ms)
+  ✔ limits each task title to one request per minute (5.9954ms)
+  ✔ task creation still works while AI is unavailable (14.1266ms)
+✔ AI description route (400.9947ms)
+  ✔ GET /health returns 200 (29.3751ms)
+  ✔ GET /tasks without a token returns 401 (10.6254ms)
+  ✔ register then login returns a JWT (243.3914ms)
+  ✔ GET /tasks returns 200 (15.1542ms)
+  ✔ POST /tasks without a title returns 400 (9.0889ms)
+  ✔ POST /tasks creates a task and GET /tasks lists it (19.1175ms)
+  ✔ an unknown route returns a JSON 404 (5.4573ms)
+✔ Task API (437.5709ms)
+ℹ tests 12
+ℹ pass 12
+ℹ fail 0
