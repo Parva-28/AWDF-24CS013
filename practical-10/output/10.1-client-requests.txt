@@ -1,0 +1,12 @@
+== Practical 10: client side (curl) ==
+
+$ POST /tasks  {"title":"Prepare viva notes"}
+HTTP 201 in 0.011296s
+{"title":"Prepare viva notes","description":"","completed":false,"priority":"medium","owner":"6ad89b9b96538873b689b877","_id":"6ad89b9b96538873b689b878","createdAt":"2026-10-21T11:01:47.657Z","__v":0}
+   -> the client had its 201 response long before the 2-second notification finished
+
+$ POST /tasks  {"title":"fail-notify demo"}   (listener throws on purpose)
+HTTP 201 in 0.006850s
+
+$ DELETE /tasks/6ad89b9e96538873b689b879   (task-deleted event)
+HTTP 200 in 0.007975s

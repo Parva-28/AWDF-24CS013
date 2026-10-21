@@ -1,0 +1,14 @@
+MongoDB connected
+Server running on port 5000
+POST /auth/register - 2026-10-21T11:01:47.236Z
+POST /auth/login - 2026-10-21T11:01:47.456Z
+POST /tasks - 2026-10-21T11:01:47.653Z
+[API] Response sent at 2026-10-21T11:01:47.660Z
+[Notification] listener started at 2026-10-21T11:01:47.662Z for "Prepare viva notes"
+[Notification] Task "Prepare viva notes" created by events@example.com — notification finished at 2026-10-21T11:01:49.664Z
+POST /tasks - 2026-10-21T11:01:50.806Z
+[API] Response sent at 2026-10-21T11:01:50.810Z
+[Notification] listener started at 2026-10-21T11:01:50.810Z for "fail-notify demo"
+[Notification error] Notification service rejected task "fail-notify demo" (logged at 2026-10-21T11:01:52.815Z)
+DELETE /tasks/6ad89b9e96538873b689b879 - 2026-10-21T11:01:53.941Z
+[Audit] Task "fail-notify demo" deleted by events@example.com at 2026-10-21T11:01:53.948Z
