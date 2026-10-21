@@ -1,0 +1,26 @@
+Server running on port 5000
+GET /tasks - 2026-10-21T10:30:54.857Z
+POST /tasks - 2026-10-21T10:30:55.059Z
+POST /tasks - 2026-10-21T10:30:55.206Z
+GET /tasks - 2026-10-21T10:30:55.330Z
+PUT /tasks/1 - 2026-10-21T10:30:55.463Z
+PUT /tasks/99 - 2026-10-21T10:30:55.600Z
+PUT /tasks/abc - 2026-10-21T10:30:55.731Z
+POST /tasks - 2026-10-21T10:30:55.875Z
+POST /tasks - 2026-10-21T10:30:55.998Z
+DELETE /tasks/2 - 2026-10-21T10:30:56.135Z
+DELETE /tasks/2 - 2026-10-21T10:30:56.252Z
+GET /debug/error - 2026-10-21T10:30:56.388Z
+Error: Deliberate test error for the lab demo
+    at C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\src\app.js:20:11
+    at Layer.handleRequest (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\lib\route.js:157:13)
+    at Route.dispatch (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\lib\route.js:117:3)
+    at handle (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\index.js:435:11)
+    at Layer.handleRequest (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\lib\layer.js:152:17)
+    at C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\index.js:295:15
+    at processParams (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\index.js:582:12)
+    at next (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\node_modules\router\index.js:291:5)
+    at requestLogger (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-4\server\src\middleware\logger.js:4:3)
+GET /nope - 2026-10-21T10:30:56.517Z
+GET /tasks - 2026-10-21T10:30:56.652Z

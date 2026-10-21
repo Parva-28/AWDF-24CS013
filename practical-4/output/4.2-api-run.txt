@@ -1,0 +1,57 @@
+== Practical 4: Task Management REST API (Express, in-memory) ==
+
+$ GET /tasks            (empty list)
+HTTP/1.1 200 OK
+[]
+
+$ POST /tasks          (create)
+HTTP/1.1 201 Created
+{"id":1,"title":"Write lab report","description":"Practical 4","completed":false,"createdAt":"2026-10-21T10:30:55.059Z"}
+
+$ POST /tasks          (create second)
+HTTP/1.1 201 Created
+{"id":2,"title":"Submit to GitHub","description":"","completed":false,"createdAt":"2026-10-21T10:30:55.206Z"}
+
+$ GET /tasks           (two tasks)
+HTTP/1.1 200 OK
+[{"id":1,"title":"Write lab report","description":"Practical 4","completed":false,"createdAt":"2026-10-21T10:30:55.059Z"},{"id":2,"title":"Submit to GitHub","description":"","completed":false,"createdAt":"2026-10-21T10:30:55.206Z"}]
+
+$ PUT /tasks/1         (update)
+HTTP/1.1 200 OK
+{"id":1,"title":"Write lab report","description":"Practical 4","completed":true,"createdAt":"2026-10-21T10:30:55.059Z"}
+
+$ PUT /tasks/99        (not found)
+HTTP/1.1 404 Not Found
+{"error":"Task 99 not found"}
+
+$ PUT /tasks/abc       (invalid id)
+HTTP/1.1 400 Bad Request
+{"error":"Task id must be a positive integer"}
+
+$ POST /tasks          (no Content-Type header)
+HTTP/1.1 415 Unsupported Media Type
+{"error":"Content-Type must be application/json"}
+
+$ POST /tasks          (missing title)
+HTTP/1.1 400 Bad Request
+{"error":"title is required"}
+
+$ DELETE /tasks/2      (delete)
+HTTP/1.1 200 OK
+{"message":"Task deleted","task":{"id":2,"title":"Submit to GitHub","description":"","completed":false,"createdAt":"2026-10-21T10:30:55.206Z"}}
+
+$ DELETE /tasks/2      (already deleted)
+HTTP/1.1 404 Not Found
+{"error":"Task 2 not found"}
+
+$ GET /debug/error     (deliberate 500 via global handler)
+HTTP/1.1 500 Internal Server Error
+{"error":"Something went wrong"}
+
+$ GET /nope            (unknown route)
+HTTP/1.1 404 Not Found
+{"error":"Route GET /nope not found"}
+
+$ GET /tasks           (final list)
+HTTP/1.1 200 OK
+[{"id":1,"title":"Write lab report","description":"Practical 4","completed":true,"createdAt":"2026-10-21T10:30:55.059Z"}]
