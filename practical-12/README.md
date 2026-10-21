@@ -1,10 +1,8 @@
 # Practical 12 – CI/CD Pipeline with GitHub Actions
 
-![CI Pipeline](https://github.com/<your-username>/AWDF-24CS013/actions/workflows/ci.yml/badge.svg)
+![CI Pipeline](https://github.com/Parva-28/AWDF-24CS013/actions/workflows/ci.yml/badge.svg)
 
-Replace `<your-username>` above after pushing; the badge then shows the status of the latest run (supplementary).
-
-The workflow is at **`.github/workflows/ci.yml` in the repository root**. GitHub only reads workflows from there, so it points at `practical-12/` with `working-directory`.
+The badge shows the status of the latest run (supplementary). The workflow is at **`.github/workflows/ci.yml` in the repository root**. GitHub only reads workflows from there, so it points at `practical-12/` with `working-directory`.
 
 ```
 git push origin main

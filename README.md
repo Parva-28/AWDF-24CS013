@@ -1,6 +1,8 @@
 # ITUE301 – Advanced Web Development Frameworks: Practicals 1–13
 
-Student ID: 24CS013 · Academic year 2025-26
+Parva Chhatrola · Student ID 24CS013 · CSE304: Full Stack Development · Academic year 2025-26
+
+Repository: https://github.com/Parva-28/AWDF-24CS013
 
 Open `index.html` for the practical guide pages. Each `practical-N/` folder holds the working code at the end of that practical, its evidence in `output/`, a `README.md`, and the filled-in submission document `Practical-N-Submission.docx`. There is one git commit per practical.
 
@@ -20,15 +22,13 @@ Open `index.html` for the practical guide pages. Each `practical-N/` folder hold
 | 12 | GitHub Actions CI | `practical-12/`, `.github/workflows/ci.yml` |
 | 13 | AI API integration | `practical-13/` |
 
-## Before submitting
+## Still to add before submitting
 
-1. Fill in **Student Name** in each `Practical-N-Submission.docx`.
-2. Push this repository to GitHub, then replace `<your-username>` in every document's GitHub link (and in `practical-12/README.md` for the CI badge).
-3. Add the items marked **TO ADD** in the documents:
-   - Practical 11: `docker-compose up --build` and `docker ps` screenshots (Docker was not available when this was prepared).
-   - Practical 12: the failed and the passed run from the GitHub Actions tab (they only appear after pushing).
-   - Practical 13: a screenshot with a real `OPENAI_API_KEY`; the success screenshot included is a simulated response.
-4. The documents' page header reads "CSE304: Full Stack Development 24CSXXX", copied from `File-Format.docx`, while the handouts say ITUE301. Change it if your department expects the ITUE301 header.
+Each submission document already has the name, student ID, header and GitHub link filled in. Three items marked **TO ADD** need screenshots that could not be produced on the machine used to build this:
+
+- Practical 11: `docker-compose up --build` and `docker ps` (Docker was not available).
+- Practical 12: one failed and one passed run from the GitHub Actions tab.
+- Practical 13: a suggestion made with a real `OPENAI_API_KEY` (the included success screenshot is a simulated response).
 
 ## Running the server practicals
 
