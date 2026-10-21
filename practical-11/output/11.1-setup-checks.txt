@@ -1,0 +1,31 @@
+== Static checks for Practical 11 (Docker is not installed on this machine) ==
+
+1. docker-compose.yml parses as YAML and defines:
+   - mongodb: image mongo:7, ports ["27017:27017"]
+   - backend: build ./server, ports ["5000:5000"], depends_on {"mongodb":{"condition":"service_healthy"}}
+   - frontend: build ./client, ports ["5173:80"], depends_on ["backend"]
+   networks: app-network; volumes: mongo-data
+   backend MONGO_URI: mongodb://mongodb:27017/taskdb
+
+2. Backend Dockerfile steps, run by hand in a clean copy (npm ci --omit=dev, then node src/server.js)
+   added 103 packages, and audited 104 packages in 2s
+   server: MongoDB connected
+   server: Server running on port 5000
+   (environment variables supplied the way docker-compose.yml does; inside Compose MONGO_URI is mongodb://mongodb:27017/taskdb)
+   GET /tasks without token -> {"error":"Missing or malformed Authorization header"} 401
+   GET /debug/error with NODE_ENV=production -> {"error":"Route GET /debug/error not found"} 404  (debug routes are disabled)
+
+3. Frontend Dockerfile build stage, run by hand (npm ci, then npm run build with VITE_API_URL)
+   added 66 packages, and audited 67 packages in 8s
+   dist/assets/taskApi-C-0EzTPS.js      0.87 kB │ gzip:  0.50 kB
+   dist/assets/Contact-DMLGmLct.js      1.05 kB │ gzip:  0.55 kB
+   dist/assets/Login-D9OR6CXv.js        1.51 kB │ gzip:  0.75 kB
+   dist/assets/TaskBoard-Dsiz80Yv.js    5.76 kB │ gzip:  2.11 kB
+   dist/assets/index-9-vH7YcP.js      248.80 kB │ gzip: 79.00 kB
+   dist/assets/TaskStats-ClwrFtGK.js  323.31 kB │ gzip: 94.95 kB
+   ✓ built in 324ms
+   API URL found in the built JS: taskApi-C-0EzTPS.js
+
+4. .dockerignore files
+   server: node_modules .env npm-debug.log .git Dockerfile .dockerignore scripts 
+   client: node_modules dist .env npm-debug.log .git Dockerfile .dockerignore 
