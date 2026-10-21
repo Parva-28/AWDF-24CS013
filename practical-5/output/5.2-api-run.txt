@@ -1,0 +1,55 @@
+== Practical 5: Task API backed by MongoDB (Mongoose) ==
+
+$ POST /tasks  (title has spaces; trimmed by pre-save hook)
+HTTP/1.1 201 Created
+{"title":"Write Mongoose schema","description":"Practical 5","completed":false,"priority":"high","_id":"6ad899087bbd97004bad6105","createdAt":"2026-10-21T10:50:48.718Z","__v":0}
+
+$ POST /tasks  (defaults: completed=false, priority=medium)
+HTTP/1.1 201 Created
+{"title":"Second task","description":"","completed":false,"priority":"medium","_id":"6ad899097bbd97004bad6106","createdAt":"2026-10-21T10:50:49.045Z","__v":0}
+
+$ POST /tasks  (missing required title)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"title":"Path `title` is required."}}
+
+$ POST /tasks  (priority outside the enum)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"priority":"`urgent` is not a valid enum value for path `priority`."}}
+
+$ GET /tasks
+HTTP/1.1 200 OK
+[{"_id":"6ad899087bbd97004bad6105","title":"Write Mongoose schema","description":"Practical 5","completed":false,"priority":"high","createdAt":"2026-10-21T10:50:48.718Z","__v":0},{"_id":"6ad899097bbd97004bad6106","title":"Second task","description":"","completed":false,"priority":"medium","createdAt":"2026-10-21T10:50:49.045Z","__v":0}]
+
+$ GET /tasks/6ad899087bbd97004bad6105  (one task)
+HTTP/1.1 200 OK
+{"_id":"6ad899087bbd97004bad6105","title":"Write Mongoose schema","description":"Practical 5","completed":false,"priority":"high","createdAt":"2026-10-21T10:50:48.718Z","__v":0}
+
+$ GET /tasks/000000000000000000000000  (valid id, not in database)
+HTTP/1.1 404 Not Found
+{"error":"Task 000000000000000000000000 not found"}
+
+$ GET /tasks/abc  (malformed id)
+HTTP/1.1 400 Bad Request
+{"error":"Task id must be a 24-character MongoDB ObjectId"}
+
+$ PUT /tasks/6ad899097bbd97004bad6106  (mark completed)
+HTTP/1.1 200 OK
+{"_id":"6ad899097bbd97004bad6106","title":"Second task","description":"","completed":true,"priority":"medium","createdAt":"2026-10-21T10:50:49.045Z","__v":0}
+
+$ PUT /tasks/6ad899097bbd97004bad6106  (empty title fails validation)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"title":"Path `title` is required."}}
+
+$ DELETE /tasks/6ad899097bbd97004bad6106
+HTTP/1.1 200 OK
+{"message":"Task deleted","task":{"_id":"6ad899097bbd97004bad6106","title":"Second task","description":"","completed":true,"priority":"medium","createdAt":"2026-10-21T10:50:49.045Z","__v":0}}
+
+$ DELETE /tasks/6ad899097bbd97004bad6106  (already deleted)
+HTTP/1.1 404 Not Found
+{"error":"Task 6ad899097bbd97004bad6106 not found"}
+
+-- restarting the server now; the data must still be there --
+
+$ GET /tasks  (after server restart: data read back from MongoDB)
+HTTP/1.1 200 OK
+[{"_id":"6ad899087bbd97004bad6105","title":"Write Mongoose schema","description":"Practical 5","completed":false,"priority":"high","createdAt":"2026-10-21T10:50:48.718Z","__v":0}]

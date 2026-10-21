@@ -1,0 +1,45 @@
+--- first run ---
+◇ injected env (2) from .env
+MongoDB connected
+Server running on port 5000
+POST /tasks - 2026-10-21T10:50:48.710Z
+POST /tasks - 2026-10-21T10:50:49.044Z
+POST /tasks - 2026-10-21T10:50:49.376Z
+ValidationError: Task validation failed: title: Path `title` is required.
+    at model.validate (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\document.js:2930:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async model.$__save (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:399:7)
+    at async maybeTracedSave (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:676:7)
+    at async model.create (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:2807:5)
+    at async createTask (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\src\controllers\taskController.js:27:18)
+POST /tasks - 2026-10-21T10:50:49.613Z
+ValidationError: Task validation failed: priority: `urgent` is not a valid enum value for path `priority`.
+    at model.validate (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\document.js:2930:36)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async model.$__save (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:399:7)
+    at async maybeTracedSave (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:676:7)
+    at async model.create (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\model.js:2807:5)
+    at async createTask (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\src\controllers\taskController.js:27:18)
+GET /tasks - 2026-10-21T10:50:49.807Z
+GET /tasks/6ad899087bbd97004bad6105 - 2026-10-21T10:50:50.034Z
+GET /tasks/000000000000000000000000 - 2026-10-21T10:50:50.252Z
+GET /tasks/abc - 2026-10-21T10:50:50.453Z
+PUT /tasks/6ad899097bbd97004bad6106 - 2026-10-21T10:50:50.648Z
+(node:27252) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PUT /tasks/6ad899097bbd97004bad6106 - 2026-10-21T10:50:50.888Z
+ValidationError: Validation failed: title: Path `title` is required.
+    at model.Query.validate (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\query.js:4221:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async model.Query._findOneAndUpdate (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\query.js:3653:5)
+    at async maybeTracedQueryExec (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\node_modules\mongoose\lib\query.js:4826:65)
+    at async updateTask (C:\Users\Parva\OneDrive\Desktop\AWDF-24CS013\practical-5\server\src\controllers\taskController.js:37:18)
+(node:27252) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+DELETE /tasks/6ad899097bbd97004bad6106 - 2026-10-21T10:50:51.108Z
+DELETE /tasks/6ad899097bbd97004bad6106 - 2026-10-21T10:50:51.330Z
+--- after restart ---
+◇ injected env (2) from .env
+MongoDB connected
+Server running on port 5000
+GET /tasks - 2026-10-21T10:50:59.487Z
+GET /tasks - 2026-10-21T10:50:59.561Z
