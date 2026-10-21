@@ -1,0 +1,7 @@
+GET / -> h2 "About Me"
+After Dark mode click: <html class="dark">
+Clicked Contact link -> URL /contact; window marker survived: yes (no full page reload)
+Counter text: "23 characters"
+Preview text: "Live preview: Hello from React Router"
+Help toggle opened tooltip: "Type a short note. Nothing is sent anywhere in this practical."
+GET /no-such-page -> h2 "404 – Page not found"
