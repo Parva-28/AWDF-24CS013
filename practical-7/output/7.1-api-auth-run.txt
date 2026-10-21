@@ -1,0 +1,76 @@
+== Practical 7: JWT authentication and validation middleware ==
+
+$ POST /auth/register  (new user)
+HTTP/1.1 201 Created
+{"id":"6ad899dca3386f179588ea5d","email":"student@example.com"}
+
+$ POST /auth/register  (same email again)
+HTTP/1.1 409 Conflict
+{"error":"An account with this email already exists"}
+
+$ POST /auth/register  (bad email, short password)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"email":"a valid email is required","password":"password must be at least 8 characters"}}
+
+$ POST /auth/login  (wrong password)
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid email or password"}
+
+$ POST /auth/login  (correct password)
+HTTP/1.1 200 OK
+{"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZDg5OWRjYTMzODZmMTc5NTg4ZWE1ZCIsImVtYWlsIjoic3R1ZGVudEBleGFtcGxlLmNvbSIsImlhdCI6MTc5MjU4MDA2MSwiZXhwIjoxNzkyNTgzNjYxfQ.VM2AYzUmO-owsmBMVR79MleTLJ8kaKzmkahNGtOqCg0","expiresIn":"1h"}
+   token copied: eyJhbGciOiJIUzI1NiIsInR5c...
+
+$ GET /tasks  (no Authorization header)
+HTTP/1.1 401 Unauthorized
+{"error":"Missing or malformed Authorization header"}
+
+$ GET /tasks  (header without the Bearer scheme)
+HTTP/1.1 401 Unauthorized
+{"error":"Missing or malformed Authorization header"}
+
+$ GET /tasks  (tampered token: last character changed)
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid or expired token"}
+
+$ GET /tasks  (token that expired a minute ago)
+HTTP/1.1 401 Unauthorized
+{"error":"Invalid or expired token"}
+
+$ GET /auth/me  (decoded token)
+HTTP/1.1 200 OK
+{"id":"6ad899dca3386f179588ea5d","email":"student@example.com","tokenExpires":"2026-10-21T11:54:21.000Z"}
+
+$ GET /tasks  (valid token)
+HTTP/1.1 200 OK
+[]
+
+$ POST /tasks  (valid token, missing title -> validation middleware)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"title":"title is required"}}
+
+$ POST /tasks  (wrong types -> validation middleware)
+HTTP/1.1 400 Bad Request
+{"error":"Validation failed","details":{"completed":"completed must be true or false","priority":"priority must be low, medium or high"}}
+
+$ POST /tasks  (valid)
+HTTP/1.1 201 Created
+{"title":"Add JWT auth","description":"","completed":false,"priority":"high","owner":"6ad899dca3386f179588ea5d","_id":"6ad899dfa3386f179588ea5e","createdAt":"2026-10-21T10:54:23.134Z","__v":0}
+
+$ PUT /tasks/6ad899dfa3386f179588ea5e  (valid token)
+HTTP/1.1 200 OK
+{"_id":"6ad899dfa3386f179588ea5e","title":"Add JWT auth","description":"","completed":true,"priority":"high","owner":"6ad899dca3386f179588ea5d","createdAt":"2026-10-21T10:54:23.134Z","__v":0}
+
+-- a second user cannot see or change the first user's task --
+
+$ GET /tasks  (as other@example.com)
+HTTP/1.1 200 OK
+[]
+
+$ DELETE /tasks/6ad899dfa3386f179588ea5e  (as other@example.com)
+HTTP/1.1 404 Not Found
+{"error":"Task 6ad899dfa3386f179588ea5e not found"}
+
+-- users collection in MongoDB: only bcrypt hashes are stored --
+  student@example.com  password: $2b$10$PBfMAARxJ9ZNdKVM0lfykun6vdZ1nySEDUcZMXAactqNkwxrqvEaK
+  other@example.com  password: $2b$10$NNd9/BqkacGWSegsmVLNkO6SNKN6UIC7WxCqQUfGTACE54qmJwfEC

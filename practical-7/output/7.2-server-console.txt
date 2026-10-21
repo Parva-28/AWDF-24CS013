@@ -1,0 +1,31 @@
+◇ injected env (3) from .env
+MongoDB connected
+Server running on port 5000
+POST /auth/register - 2026-10-21T10:54:20.200Z
+POST /auth/register - 2026-10-21T10:54:20.477Z
+POST /auth/register - 2026-10-21T10:54:20.656Z
+POST /auth/login - 2026-10-21T10:54:20.822Z
+POST /auth/login - 2026-10-21T10:54:21.094Z
+GET /tasks - 2026-10-21T10:54:21.461Z
+GET /tasks - 2026-10-21T10:54:21.650Z
+GET /tasks - 2026-10-21T10:54:21.852Z
+GET /tasks - 2026-10-21T10:54:22.223Z
+GET /auth/me - 2026-10-21T10:54:22.421Z
+GET /tasks - 2026-10-21T10:54:22.590Z
+POST /tasks - 2026-10-21T10:54:22.759Z
+POST /tasks - 2026-10-21T10:54:22.955Z
+POST /tasks - 2026-10-21T10:54:23.133Z
+PUT /tasks/6ad899dfa3386f179588ea5e - 2026-10-21T10:54:23.408Z
+(node:25232) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+POST /auth/register - 2026-10-21T10:54:23.577Z
+POST /auth/login - 2026-10-21T10:54:23.728Z
+GET /tasks - 2026-10-21T10:54:23.870Z
+DELETE /tasks/6ad899dfa3386f179588ea5e - 2026-10-21T10:54:24.055Z
+POST /auth/register - 2026-10-21T10:55:42.352Z
+POST /auth/login - 2026-10-21T10:55:42.448Z
+GET /auth/me - 2026-10-21T10:55:42.562Z
+GET /tasks - 2026-10-21T10:55:42.564Z
+POST /tasks - 2026-10-21T10:55:42.686Z
+GET /tasks - 2026-10-21T10:55:42.942Z
+GET /auth/me - 2026-10-21T10:55:42.943Z

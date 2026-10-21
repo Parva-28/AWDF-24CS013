@@ -1,0 +1,15 @@
+1. Open /tasks without a token
+   Redirected to /login
+2. Register a new account from the UI (then it logs in automatically)
+    POST /auth/register -> 201
+    POST /auth/login -> 200
+    GET /auth/me -> 200
+    GET /tasks -> 200
+   Now on /tasks; token stored: yes
+    POST /tasks -> 201
+3. Log out
+   Now on /login; token stored: no
+4. Put an expired token in the browser and open /tasks
+    GET /tasks -> 401
+    GET /auth/me -> 401
+   Redirected to /login with notice: "Your session expired. Please log in again."; token cleared: yes
