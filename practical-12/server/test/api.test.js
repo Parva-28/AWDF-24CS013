@@ -52,7 +52,7 @@ describe('Task API', () => {
 
   test('GET /tasks returns 200', async () => {
     const res = await request(app).get('/tasks').set('Authorization', `Bearer ${token}`)
-    assert.equal(res.statusCode, 200)
+    assert.equal(res.statusCode, 201) // deliberately wrong: demonstrates a failing pipeline
     assert.ok(Array.isArray(res.body))
   })
 
