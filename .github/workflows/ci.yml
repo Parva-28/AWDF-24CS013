@@ -1,0 +1,54 @@
+# Practical 12 – CI pipeline for the Task Manager (practical-12/).
+# Runs on every push to main. To run only on pull requests targeting main (supplementary
+# problem), replace the `push:` block below with:
+#   pull_request:
+#     branches: [main]
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Supplementary: lint runs first; the test job only starts if it passes
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22 # Mongoose 9 needs Node 20.19 or newer
+      - name: Lint the API
+        working-directory: practical-12/server
+        run: |
+          npm ci
+          npm run lint
+      - name: Lint and build the React client
+        working-directory: practical-12/client
+        run: |
+          npm ci
+          npm run lint
+          npm run build
+
+  build-and-test:
+    needs: lint
+    runs-on: ubuntu-latest
+    # A real MongoDB for the API tests, started as a service container
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    env:
+      MONGO_URI_TEST: mongodb://localhost:27017/taskdb_test
+      JWT_SECRET: ci-only-test-secret
+    defaults:
+      run:
+        working-directory: practical-12/server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test

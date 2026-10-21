@@ -1,0 +1,23 @@
+$ npm test   (test fixed)
+
+> task-manager-api@1.0.0 test
+> node --test
+
+▶ Task API
+  ✔ GET /health returns 200 (33.5806ms)
+  ✔ GET /tasks without a token returns 401 (8.428ms)
+  ✔ register then login returns a JWT (221.1394ms)
+  ✔ GET /tasks returns 200 (10.5291ms)
+  ✔ POST /tasks without a title returns 400 (5.9244ms)
+  ✔ POST /tasks creates a task and GET /tasks lists it (15.4812ms)
+  ✔ an unknown route returns a JSON 404 (5.7844ms)
+✔ Task API (383.7083ms)
+ℹ tests 7
+ℹ suites 1
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1022.6927
+exit code: 0

@@ -1,0 +1,5 @@
+$ npm run lint
+
+> task-manager-api@1.0.0 lint
+> oxlint src test
+

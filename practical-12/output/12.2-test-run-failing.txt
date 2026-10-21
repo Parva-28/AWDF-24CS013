@@ -1,0 +1,39 @@
+$ npm test   (expected status changed from 200 to 201 on purpose)
+
+> task-manager-api@1.0.0 test
+> node --test
+
+▶ Task API
+  ✔ GET /health returns 200 (36.6546ms)
+  ✔ GET /tasks without a token returns 401 (18.8691ms)
+  ✔ register then login returns a JWT (286.8243ms)
+  ✖ GET /tasks returns 200 (15.2331ms)
+  ✔ POST /tasks without a title returns 400 (9.4364ms)
+  ✔ POST /tasks creates a task and GET /tasks lists it (22.7246ms)
+  ✔ an unknown route returns a JSON 404 (8.7315ms)
+✖ Task API (520.7198ms)
+ℹ tests 7
+ℹ suites 1
+ℹ pass 6
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1203.7073
+
+✖ failing tests:
+
+test at test\api.test.js:53:3
+✖ GET /tasks returns 200 (15.2331ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  200 !== 201
+  
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 201,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+exit code: 1
